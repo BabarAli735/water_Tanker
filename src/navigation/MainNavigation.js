@@ -9,6 +9,7 @@ import SignUp from '../screens/Auth/SignUp';
 import HomeScreen from '../screens/Home/HomeScreen';
 
 import AntiDesign from 'react-native-vector-icons/AntDesign';
+import BookTanker from '../screens/BookTankerScreen/BookTanker';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +29,7 @@ const MainNavigation=()=> {
       }}>
         <Stack.Screen name={SCREENS.Login} component={SingIn} />
         <Stack.Screen name={SCREENS.SighnUp} component={SignUp} />
+        <Stack.Screen name={SCREENS.BookTanker} component={BookTanker} />
         <Stack.Screen name={SCREENS.HomeScreen} component={HomeScreen} 
        options={{
         headerStyle:{

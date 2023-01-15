@@ -6,24 +6,23 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import MapView from 'react-native-maps';
+import MapView, {Marker} from 'react-native-maps';
 import React from 'react';
 import {
   heightPercentageToDP as hp,
   responsiveFontSize as rf,
   widthPercentageToDP as wp,
 } from '../../common/responsiveFunction';
-import {COLORS, FONTFAMILY, IMAGES} from '../../constants/theme';
+import {COLORS, FONTFAMILY, IMAGES, SCREENS} from '../../constants/theme';
 import Button from '../../componant/Button';
 import AntiDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Marker} from 'react-native-svg';
-export default function HomeScreen() {
+export default function HomeScreen({navigation}) {
   const [initRegion, setinitialRegion] = React.useState({
-    latitude: 33.56772945090278,
-    longitude: 73.00746208078704,
-    latitudeDelta: 0.015,
-    longitudeDelta: 0.0121,
+    latitude: 33.5525601624979,
+    longitude:  73.01996568366887,
+    latitudeDelta: 0.014,
+    longitudeDelta: 0.0118,
   });
   
   const CatCompnant = ({image, title}) => {
@@ -50,14 +49,18 @@ export default function HomeScreen() {
     );
   };
   return (
-    <ScrollView style={styles.container}
-    contentContainerStyle={{paddingBottom:hp('3%')}}
-    >
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{paddingBottom: hp('3%')}}>
       <View style={styles.header}>
         <Text style={[styles.txt]}>Water You Need </Text>
         <Text style={[styles.txt1]}>Read a Book Take a nap</Text>
         <View style={styles.buttonContainer}>
-          <Button title="Book Your Tanker" style={styles.booktankerButton} />
+          <Button title="Book Your Tanker" style={styles.booktankerButton}
+          onPress={()=>{
+            navigation.navigate(SCREENS.BookTanker)
+          }}
+           />
         </View>
         <Image
           style={styles.imageTanker}
@@ -99,13 +102,22 @@ export default function HomeScreen() {
           style={{
             flex: 1,
           }}>
-          <Marker
-            coordinate={{
-              latitude: initRegion.latitude,
-              longitude: initRegion.longitude,
-            }}
-            
-          />
+          {MarkerData.map((item, index) => {
+            return (
+              <Marker
+                key={index}
+                coordinate={{
+                  latitude: item.lat,
+                  longitude: item.long,
+                }}>
+                <Image
+                  style={styles.imageTanker1}
+                  source={IMAGES.tankerimg}
+                  resizeMode="contain"
+                />
+              </Marker>
+            );
+          })}
         </MapView>
       </View>
     </ScrollView>
@@ -184,6 +196,10 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: -22,
   },
+  imageTanker1: {
+    height: hp('21%'),
+    width: wp('30%'),
+  },
   categoryContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -231,3 +247,26 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
 });
+
+const MarkerData = [
+  {
+    id: 1,
+    lat: 33.5525601624979,
+    long: 73.01996568366887,
+  },
+  {
+    id: 1,
+    lat: 33.57358727719362,
+    long: 73.0235705725744,
+  },
+  {
+    id: 1,
+    lat: 33.55263169197335,
+    long: 73.02151063605696,
+  },
+  {
+    id: 1,
+    lat: 33.55771013335155,
+    long: 73.04073671021978,
+  },
+];
