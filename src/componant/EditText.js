@@ -35,7 +35,7 @@ export default function EditText({
       ]}>
       <TextInput
         placeholder={placeholder}
-        placeholderTextColor={COLORS.Greyscale}
+        placeholderTextColor={COLORS.brownGrey}
         style={[styles.txtInput]}
         keyboardAppearance="light"
         keyboardType={keyboardType}
@@ -86,6 +86,6 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: rf(2.5),
-    color: COLORS.Greyscale,
+    color: COLORS.brownGrey,
   },
 });

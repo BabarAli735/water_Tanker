@@ -25,12 +25,14 @@ export default function HomeScreen({navigation}) {
     longitudeDelta: 0.0118,
   });
   
-  const CatCompnant = ({image, title}) => {
+  const CatCompnant = ({image, title,onPress}) => {
     return (
-      <View style={styles.catComponant}>
+      <TouchableOpacity style={styles.catComponant}
+      onPress={onPress}
+      >
         <Image style={styles.catimage} source={image} resizeMode="contain" />
         <Text style={[styles.txt2]}>{title}</Text>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -69,8 +71,16 @@ export default function HomeScreen({navigation}) {
         />
       </View>
       <View style={styles.categoryContainer}>
-        <CatCompnant image={IMAGES.tanker} title="Usage-Water" />
-        <CatCompnant image={IMAGES.drinkwater} title="Pure-Water" />
+        <CatCompnant image={IMAGES.tanker} title="Usage-Water" 
+        onPress={()=>{
+          navigation.navigate(SCREENS.BookTanker)
+        }}
+        />
+        <CatCompnant image={IMAGES.drinkwater} title="Pure-Water" 
+         onPress={()=>{
+          navigation.navigate(SCREENS.Pure_Water)
+        }}
+        />
       </View>
       <View style={styles.whereTo}>
         <Text style={[styles.txt3]}>Where To ?</Text>

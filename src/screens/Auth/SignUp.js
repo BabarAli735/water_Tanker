@@ -32,9 +32,6 @@ import { CommonActions } from '@react-navigation/native';
         <EditText placeholder={'Username'} />
         <EditText placeholder={'Email'} />
         <EditText placeholder={'Password'} password icon />
-  
-      
-  
         <Button title="Sign up" style={{marginTop: hp('3%'),}}
         onPress={()=>{
             navigation.dispatch(

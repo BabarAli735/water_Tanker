@@ -46,6 +46,7 @@ export const IMAGES = {
   tanker:require('../assets/images/tanker.png'),
   drinkwater:require('../assets/images/drinkwater.png'),
   tankerimg:require('../assets/images/tankerimg.png'),
+  user1:require('../assets/images/user1.png'),
 };
 
 /* * Screens * */
@@ -55,6 +56,8 @@ export const SCREENS = {
   SighnUp:'SighnUp',
   HomeScreen:'HomeScreen',
   BookTanker:'BookTanker',
+  Pure_Water:'Pure_Water',
+  OnBoardScreen:'OnBoardScreen',
  
 }
 

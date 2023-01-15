@@ -1,6 +1,6 @@
-import {StyleSheet, Text, View,Image} from 'react-native';
+import {StyleSheet, Text, View, Image, TextInput} from 'react-native';
 import React from 'react';
-import {COLORS, IMAGES} from '../../constants/theme';
+import {COLORS, FONTFAMILY, IMAGES} from '../../constants/theme';
 import MapView, {Marker} from 'react-native-maps';
 import Button from '../../componant/Button';
 
@@ -12,10 +12,62 @@ import {
 export default function BookTanker({navigation}) {
   const [initRegion, setinitialRegion] = React.useState({
     latitude: 33.5525601624979,
-    longitude:  73.01996568366887,
+    longitude: 73.01996568366887,
     latitudeDelta: 0.2,
     longitudeDelta: 0.0118,
   });
+
+  const PickUpEnter = () => {
+    return (
+      <View style={styles.pickUpLocation}>
+        <View style={{alignItems: 'center'}}>
+          <View
+            style={{
+              height: 7,
+              width: 7,
+              borderRadius: 7,
+              backgroundColor: COLORS.black,
+            }}
+          />
+          <View
+            style={{
+              height: hp('7%'),
+              width: 1,
+              backgroundColor: COLORS.brownGrey,
+            }}
+          />
+          <View
+            style={{height: 7, width: 7, backgroundColor: COLORS.brownGrey}}
+          />
+        </View>
+        <View style={{marginStart: wp('2%'), width: '95%'}}>
+          <TextInput
+            placeholder="Enter PickUp Point"
+            placeholderTextColor={COLORS.black}
+            style={{
+              backgroundColor: COLORS.veryLightPink,
+              fontFamily: FONTFAMILY.SemiBold,
+              paddingHorizontal:wp('3%'),
+              paddingVertical:hp('1%'),
+              color:COLORS.black
+            }}
+          />
+          <TextInput
+            placeholder="Where To ?"
+            placeholderTextColor={COLORS.black}
+            style={{
+              backgroundColor: COLORS.veryLightPink,
+              marginTop: hp('2%'),
+              fontFamily: FONTFAMILY.SemiBold,
+              paddingHorizontal:wp('3%'),
+              paddingVertical:hp('1%'),
+              color:COLORS.black
+            }}
+          />
+        </View>
+      </View>
+    );
+  };
   return (
     <View style={styles.container}>
       <MapView
@@ -56,8 +108,9 @@ export default function BookTanker({navigation}) {
           );
         })}
       </MapView>
+      <PickUpEnter />
       <Button
-        title="Book Your Tanker"
+        title="Done"
         style={styles.booktankerButton}
         onPress={() => {
           navigation.goBack();
@@ -82,6 +135,19 @@ const styles = StyleSheet.create({
   imageTanker1: {
     height: hp('21%'),
     width: wp('30%'),
+  },
+  pickUpLocation: {
+    flex: 1,
+    alignItems: 'center',
+    // justifyContent: 'center',
+    backgroundColor: COLORS.white,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: wp('3%'),
+    flexDirection: 'row',
+    paddingVertical: hp('1%'),
   },
 });
 const MarkerData = [
