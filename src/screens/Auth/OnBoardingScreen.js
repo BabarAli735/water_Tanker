@@ -22,12 +22,10 @@ export default function OnBoardScreen({navigation}) {
   const {width} = useWindowDimensions();
   const slideRef = useRef(null);
   const scrollX = useRef(new Animated.Value(0)).current;
-
   const onViewRef = React.useRef(({viewableItems}) => {
     setCurrentIndex(viewableItems[0].index);
   });
   const viewConfigRef = useRef({viewAreaCoveragePercentThreshold: 50});
-
   const RendorOnBoard = ({item, index}) => {
     return (
       <View
@@ -168,15 +166,23 @@ export default function OnBoardScreen({navigation}) {
           paddingHorizontal: wp('3%'),
           flexDirection: 'row',
         }}>
-        <Button onPress={() => {
-            navigation.navigate(SCREENS.Login)
-        }} title={'Login'} style={{width: wp('40%')}} />
+        <Button
+          onPress={() => {
+            navigation.navigate(SCREENS.Login, {
+              from: currentIndex === 0 ? 'Driver' : 'User',
+            });
+          }}
+          title={'Login'}
+          style={{width: wp('40%')}}
+        />
         <Button
           title={'SignUp'}
           style={{width: wp('40%'), marginLeft: wp('5%')}}
           onPress={() => {
-            navigation.navigate(SCREENS.SighnUp)
-        }}
+            navigation.navigate(SCREENS.SighnUp, {
+              from: currentIndex === 0 ? 'Driver' : 'User',
+            });
+          }}
         />
       </View>
     </View>

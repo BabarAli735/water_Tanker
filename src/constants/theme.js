@@ -212,3 +212,12 @@ export const STYLES = StyleSheet.create({
 });
 
 
+/* * Api Path * */
+export const CONSTANTS = {
+  User:'user',
+  Member:'Member',
+  UserData:'userData',
+  Architect:'Architect',
+  Sign_Board:'Sign Board',
+  Builder:'Builder'
+ }

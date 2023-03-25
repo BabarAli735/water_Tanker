@@ -21,9 +21,11 @@ import {
   import SocialButtons from '../../componant/SocialButtons';
 import { CommonActions } from '@react-navigation/native';
   
-  export default function SignUp({navigation}) {
+  export default function SignUp({navigation,route}) {
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
-    return (
+  
+    console.log('route===',route.params);
+      return (
       <SafeAreaView style={styles.container}>
         <Text style={[styles.txt]}>Get Started</Text>
   

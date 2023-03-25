@@ -19,8 +19,9 @@ import {
   import Button from '../../componant/Button';
 import SocialButtons from '../../componant/SocialButtons';
 import { CommonActions } from '@react-navigation/native';
-  export default function SignIn({navigation}) {
+  export default function SignIn({navigation,route}) {
     const [show, setShow] = useState(true);
+    console.log('route===',route.params);
     return (
       <SafeAreaView style={styles.container}>
         <Text style={[styles.txt]}>Lets sign you in </Text>
