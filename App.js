@@ -4,7 +4,7 @@ import {
   SafeAreaView,
   StyleSheet,
 } from 'react-native';
-import { Provider } from 'react-redux/es/exports';
+import { Provider } from 'react-redux';
 import MainNavigation from './src/navigation/MainNavigation';
 import store from './src/redux/store';
 import Toast, {BaseToast, ErrorToast} from 'react-native-toast-message';
@@ -47,18 +47,18 @@ function App()  {
     ),
   };
   return (
-    <SafeAreaView style={styles.container}>
+    // <SafeAreaView style={styles.container}>
     <Provider store={store}>
-    <Toast config={toastConfig} />
       <MainNavigation />
+    <Toast config={toastConfig} />
     </Provider>
-  </SafeAreaView>
+  // </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container:{
-    flex:1
+    flex:1,
   }
 });
 

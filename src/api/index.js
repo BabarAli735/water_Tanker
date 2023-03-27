@@ -1,5 +1,5 @@
 import axios from 'axios';
-export const base_url = 'https://glisten.swadhasoftwares.com/';
+export const base_url = 'http://192.168.100.49:3000/api/v1/';
 export const image_url = '';
 export const API = {
   IMAGE_URL: image_url,
@@ -43,7 +43,7 @@ export const requestPost = (url, data, isRaw, extraHeaders = {}) => {
       })
       .then(response => {
         console.log('API', url, 'requestPost-response.status', response.data);
-        resolve(response.data);
+        resolve(response);
       })
       .catch(error => {
         console.log('API', url, 'requestPost-error', error);

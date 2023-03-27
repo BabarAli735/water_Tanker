@@ -52,12 +52,15 @@ export const IMAGES = {
 /* * Screens * */
 export const SCREENS = {
   /* * Auth  Screens * */
+  SplashScreen:'SplashScreen',
   Login:'Login',
   SighnUp:'SighnUp',
   HomeScreen:'HomeScreen',
   BookTanker:'BookTanker',
   Pure_Water:'Pure_Water',
   OnBoardScreen:'OnBoardScreen',
+  GooglePlacesInput:'GooglePlacesInput',
+  OtpVerification:'OtpVerification',
  
 }
 

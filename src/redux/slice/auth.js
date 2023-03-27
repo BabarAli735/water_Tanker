@@ -1,59 +1,111 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {API, requestGet, requestPost, requestPostUrlEncoded} from '../../api';
-import { CONSTANTS } from '../../constants/theme';
+import {CONSTANTS} from '../../constants/theme';
+import utills from '../../utills';
 const initialState = {
   userData: null,
+  location: null,
+  isLoaing: false,
 };
 
 export const RegisterSlice = createAsyncThunk(
   '/register',
   async (data, thunk) => {
     try {
+      let extraHeaders = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      };
       thunk.dispatch(saveIsLoading(true));
-      const response = await requestPostUrlEncoded(`/register`, data);
-    //   thunk.dispatch(saveIsLoading(false));
+      const response = await requestPost(
+        `user/signup`,
+        data,
+        true,
+        extraHeaders,
+      );
+      thunk.dispatch(saveUser(response));
+      thunk.dispatch(saveIsLoading(false));
       return response;
     } catch (error) {
       console.log('RegisterSlice error', error);
-    //   thunk.dispatch(saveIsLoading(false));
-      utillsJs.errorAlert('',error.response.data.message)
+      thunk.dispatch(saveIsLoading(false));
+      utills.errorAlert('', error.response.data.message);
       throw error;
     }
   },
 );
 
-export const LoginSlice = createAsyncThunk(
-  '/login',
-  async (data, thunk) => {
-    try {
-      thunk.dispatch(saveIsLoading(true));
-      const response = await requestPostUrlEncoded(`/login`, data);
-      thunk.dispatch(saveUser(response));
-    //   thunk.dispatch(saveIsLoading(false));
-      return response;
-    } catch (error) {
-      console.log('loginSlice error', error);
-    //   thunk.dispatch(saveIsLoading(false));
-      utillsJs.errorAlert('',error.response.data.message)
-      throw error;
-    }
-  },
-);
+export const SendOtp = createAsyncThunk('user/otp', async (data, thunk) => {
+  try {
+ 
+    thunk.dispatch(saveIsLoading(true));
+    const response = await requestPost(
+      `user/otp`,
+      data,
+      true,
+    );
+    thunk.dispatch(saveIsLoading(false));
+    return response;
+  } catch (error) {
+    console.log('SendOtp error', error);
+    thunk.dispatch(saveIsLoading(false));
+    utills.errorAlert('', error.response.data.message);
+    throw error;
+  }
+});
+export const OtpVarification = createAsyncThunk('user/varify_otp', async (data, thunk) => {
+  try {
+ 
+    thunk.dispatch(saveIsLoading(true));
+    const response = await requestPost(
+      `user/varify_otp`,
+      data,
+      true,
+    );
+    thunk.dispatch(saveIsLoading(false));
+    return response;
+  } catch (error) {
+    console.log('SendOtp error', error);
+    thunk.dispatch(saveIsLoading(false));
+    utills.errorAlert('', error.response.data.message);
+    throw error;
+  }
+});
+export const LoginSlice = createAsyncThunk('user/signIn', async (data, thunk) => {
+  try {
+    thunk.dispatch(saveIsLoading(true));
+    const response = await requestPost(
+      `user/signIn`,
+      data,
+      true,
+    );
+    thunk.dispatch(saveUser(response));
+      thunk.dispatch(saveIsLoading(false));
+    return response;
+  } catch (error) {
+    console.log('loginSlice error', error);
+      thunk.dispatch(saveIsLoading(false));
+    utills.errorAlert('', error.response.data.message);
+    throw error;
+  }
+});
 
 export const ChangePasswordSlice = createAsyncThunk(
   '/user_change_password',
   async (data, thunk) => {
     try {
-     
       thunk.dispatch(saveIsLoading(true));
-      const response = await requestPostUrlEncoded(`/user_change_password`, data);
-    //   thunk.dispatch(saveIsLoading(false));
+      const response = await requestPostUrlEncoded(
+        `/user_change_password`,
+        data,
+      );
+      //   thunk.dispatch(saveIsLoading(false));
       return response;
     } catch (error) {
       console.log('ChangePasswordSlice error', error);
-    //   thunk.dispatch(saveIsLoading(false));
-      utillsJs.errorAlert('',error.response.data.message)
+      //   thunk.dispatch(saveIsLoading(false));
+      utills.errorAlert('', error.response.data.message);
       throw error;
     }
   },
@@ -62,15 +114,17 @@ export const ForgotPasswordSlice = createAsyncThunk(
   '/user_forgot_password',
   async (data, thunk) => {
     try {
-     
       thunk.dispatch(saveIsLoading(true));
-      const response = await requestPostUrlEncoded(`/user_forgot_password`, data);
-    //   thunk.dispatch(saveIsLoading(false));
+      const response = await requestPostUrlEncoded(
+        `/user_forgot_password`,
+        data,
+      );
+      //   thunk.dispatch(saveIsLoading(false));
       return response;
     } catch (error) {
       console.log('ChangePasswordSlice error', error);
-    //   thunk.dispatch(saveIsLoading(false));
-      utillsJs.errorAlert('',error.response.data.message)
+      //   thunk.dispatch(saveIsLoading(false));
+      utills.errorAlert('', error.response.data.message);
       throw error;
     }
   },
@@ -81,23 +135,26 @@ const authSlice = createSlice({
   reducers: {
     saveUser: (state, action) => {
       state.userData = action.payload;
-      saveAccessTokenToStorage(action.payload)
+      saveAccessTokenToStorage(action.payload);
     },
     removeUser: (state, action) => {
-      state.userData = null
-      removeUserDataFromStorage()
+      state.userData = null;
+      removeUserDataFromStorage();
     },
-    
+    saveLocatin: (state, action) => {
+      state.location = action.payload;
+    },
+    saveIsLoading: (state, action) => {
+      state.isLoaing = action.payload;
+    },
   },
 });
-export const {saveUser,removeUser} = authSlice.actions;
+export const {saveUser, removeUser, saveLocatin, saveIsLoading} =
+  authSlice.actions;
 export default authSlice.reducer;
 
 const saveAccessTokenToStorage = userData => {
-  AsyncStorage.setItem(
-    CONSTANTS.UserData,
-    JSON.stringify(userData),
-  );
+  AsyncStorage.setItem(CONSTANTS.UserData, JSON.stringify(userData));
 };
 
 const removeUserDataFromStorage = () => {

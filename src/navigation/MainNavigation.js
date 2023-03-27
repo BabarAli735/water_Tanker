@@ -11,6 +11,9 @@ import AntiDesign from 'react-native-vector-icons/AntDesign';
 import BookTanker from '../screens/BookTankerScreen/BookTanker';
 import Pure_Water from '../screens/Pure_Water';
 import OnBoardScreen from '../screens/Auth/OnBoardingScreen';
+import GooglePlacesInput from '../componant/GooglePlacesInput';
+import SplashScreen from '../screens/Auth/SplashScreen';
+import OtpVerification from '../screens/Auth/OtpVarification';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,11 +28,14 @@ const MainNavigation = () => {
           },
           headerShadowVisible: false,
         }}>
+        <Stack.Screen name={SCREENS.SplashScreen} component={SplashScreen} />
         <Stack.Screen name={SCREENS.OnBoardScreen} component={OnBoardScreen} />
+        <Stack.Screen name={SCREENS.OtpVerification} component={OtpVerification} />
         <Stack.Screen name={SCREENS.Login} component={SingIn} />
         <Stack.Screen name={SCREENS.SighnUp} component={SignUp} />
         <Stack.Screen name={SCREENS.BookTanker} component={BookTanker} />
         <Stack.Screen name={SCREENS.Pure_Water} component={Pure_Water} />
+        <Stack.Screen name={SCREENS.GooglePlacesInput} component={GooglePlacesInput} />
         <Stack.Screen
           name={SCREENS.HomeScreen}
           component={HomeScreen}

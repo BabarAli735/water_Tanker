@@ -20,7 +20,8 @@ export default function EditText({
   icon,
   password,
   keyboardType,
-  description
+  description,
+  onChangeText
 }) {
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(true);
@@ -29,7 +30,7 @@ export default function EditText({
       style={[
         styles.container,
         style,
-        {borderColor: isFocused || disable ? COLORS.primary : COLORS.Greyscale,
+        {borderColor: isFocused  ? COLORS.primary : COLORS.Greyscale,
         height:description?hp('17%'):hp('6%')
         },
       ]}>
@@ -41,6 +42,7 @@ export default function EditText({
         keyboardType={keyboardType}
         multiline={description?true:false}
         showSoftInputOnFocus
+        onChangeText={onChangeText}
         secureTextEntry={password ? showPassword : false}
         onFocus={() => {
           setIsFocused(true);
