@@ -6,7 +6,7 @@ import utills from '../../utills';
 const initialState = {
   userData: null,
   location: null,
-  isLoaing: false,
+  isLoading: false,
 };
 
 export const RegisterSlice = createAsyncThunk(
@@ -145,7 +145,7 @@ const authSlice = createSlice({
       state.location = action.payload;
     },
     saveIsLoading: (state, action) => {
-      state.isLoaing = action.payload;
+      state.isLoading = action.payload;
     },
   },
 });

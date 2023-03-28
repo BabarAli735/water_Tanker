@@ -10,6 +10,7 @@ import store from './src/redux/store';
 import Toast, {BaseToast, ErrorToast} from 'react-native-toast-message';
 import { COLORS, FONTFAMILY } from './src/constants/theme';
 import { heightPercentageToDP as hp,responsiveFontSize as rf} from './src/common/responsiveFunction';
+import LogoLoader from './src/componant/LogoLoader';
 function App()  {
   const toastConfig = {
     success: props => (
@@ -51,6 +52,7 @@ function App()  {
     <Provider store={store}>
       <MainNavigation />
     <Toast config={toastConfig} />
+    <LogoLoader/>
     </Provider>
   // </SafeAreaView>
   );

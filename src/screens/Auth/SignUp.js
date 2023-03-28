@@ -37,7 +37,7 @@ export default function SignUp({navigation, route}) {
     long: 12345,
     type: 'user',
   });
-
+  console.log(route.params);
   useEffect(() => {
     if (SelectedLocation !== null) {
       handleChange({
@@ -162,7 +162,9 @@ export default function SignUp({navigation, route}) {
         <Text style={styles.txt2}>Already have an account? </Text>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate(SCREENS.Login);
+            navigation.navigate(SCREENS.Login,{
+              from: route.params.from==='Driver'? 'Driver' : 'User',
+            });
           }}>
           <Text style={{color: COLORS.primary, fontWeight: '700'}}>Log In</Text>
         </TouchableOpacity>

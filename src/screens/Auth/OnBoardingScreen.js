@@ -179,6 +179,7 @@ export default function OnBoardScreen({navigation}) {
           title={'SignUp'}
           style={{width: wp('40%'), marginLeft: wp('5%')}}
           onPress={() => {
+            console.log(currentIndex);
             navigation.navigate(SCREENS.SighnUp, {
               from: currentIndex === 0 ? 'Driver' : 'User',
             });

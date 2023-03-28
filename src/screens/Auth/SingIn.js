@@ -24,6 +24,7 @@ import { LoginSlice } from '../../redux/slice/auth';
 import { useDispatch } from 'react-redux';
 export default function SignIn({navigation, route}) {
   const [show, setShow] = useState(true);
+  console.log(route.params    );
   const dispatch = useDispatch();
   const [loginData, setLoginata] = useState({
     email: '',
@@ -110,7 +111,9 @@ export default function SignIn({navigation, route}) {
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => {
-            navigation.navigate(SCREENS.SighnUp);
+            navigation.navigate(SCREENS.SighnUp,{
+              from: route.params.from==='Driver'? 'Driver' : 'User',
+            });
           }}>
           <Text style={[styles.txt1, {color: COLORS.primary}]}>Sign Up</Text>
         </TouchableOpacity>
