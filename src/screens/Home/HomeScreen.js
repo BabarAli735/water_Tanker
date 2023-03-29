@@ -5,6 +5,7 @@ import {
   Text,
   View,
   TouchableOpacity,
+  Modal,
 } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import React from 'react';
@@ -17,19 +18,26 @@ import {COLORS, FONTFAMILY, IMAGES, SCREENS} from '../../constants/theme';
 import Button from '../../componant/Button';
 import AntiDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import { useNavigation } from '@react-navigation/native';
 export default function HomeScreen({navigation}) {
+  const scale = useSharedValue(0);
+  const [showDriver, setShowDriver] = React.useState(false);
+  const [driverDetail, setDriverDetail] = React.useState();
   const [initRegion, setinitialRegion] = React.useState({
     latitude: 33.5525601624979,
-    longitude:  73.01996568366887,
+    longitude: 73.01996568366887,
     latitudeDelta: 0.014,
     longitudeDelta: 0.0118,
   });
-  
-  const CatCompnant = ({image, title,onPress}) => {
+
+  const CatCompnant = ({image, title, onPress}) => {
     return (
-      <TouchableOpacity style={styles.catComponant}
-      onPress={onPress}
-      >
+      <TouchableOpacity style={styles.catComponant} onPress={onPress}>
         <Image style={styles.catimage} source={image} resizeMode="contain" />
         <Text style={[styles.txt2]}>{title}</Text>
       </TouchableOpacity>
@@ -58,11 +66,15 @@ export default function HomeScreen({navigation}) {
         <Text style={[styles.txt]}>Water You Need </Text>
         <Text style={[styles.txt1]}>Read a Book Take a nap</Text>
         <View style={styles.buttonContainer}>
-          <Button title="Book Your Tanker" style={styles.booktankerButton}
-          onPress={()=>{
-            navigation.navigate(SCREENS.BookTanker)
-          }}
-           />
+          <Button
+            title="Book Your Tanker"
+            style={styles.booktankerButton}
+            onPress={() => {
+              navigation.navigate(SCREENS.BookTanker,{
+                item:undefined
+              });
+            }}
+          />
         </View>
         <Image
           style={styles.imageTanker}
@@ -71,15 +83,19 @@ export default function HomeScreen({navigation}) {
         />
       </View>
       <View style={styles.categoryContainer}>
-        <CatCompnant image={IMAGES.tanker} title="Usage-Water" 
-        onPress={()=>{
-          navigation.navigate(SCREENS.BookTanker)
-        }}
+        <CatCompnant
+          image={IMAGES.tanker}
+          title="Usage-Water"
+          onPress={() => {
+            navigation.navigate(SCREENS.BookTanker);
+          }}
         />
-        <CatCompnant image={IMAGES.drinkwater} title="Pure-Water" 
-         onPress={()=>{
-          navigation.navigate(SCREENS.Pure_Water)
-        }}
+        <CatCompnant
+          image={IMAGES.drinkwater}
+          title="Pure-Water"
+          onPress={() => {
+            navigation.navigate(SCREENS.Pure_Water);
+          }}
         />
       </View>
       <View style={styles.whereTo}>
@@ -118,7 +134,12 @@ export default function HomeScreen({navigation}) {
                 key={index}
                 coordinate={{
                   latitude: item.lat,
-                  longitude: item.long,
+                  longitude: item.lng,
+                }}
+                onPress={() => {
+                  setShowDriver(true);
+                  setDriverDetail(item);
+                  scale.value = withTiming(1, {duration: 2000});
                 }}>
                 <Image
                   style={styles.imageTanker1}
@@ -130,10 +151,113 @@ export default function HomeScreen({navigation}) {
           })}
         </MapView>
       </View>
+      <ShowDriverDetailModal
+        isVisible={showDriver}
+        scale={scale}
+        setIsShowNumberModal={setShowDriver}
+        item={driverDetail}
+      />
     </ScrollView>
   );
 }
-
+const ShowDriverDetailModal = React.memo(
+  ({isVisible, setIsShowNumberModal, scale, item}) => {
+    const navigation=useNavigation()
+    const rStyle = useAnimatedStyle(() => {
+      return {
+        transform: [{scale: scale.value}],
+      };
+    }, []);
+    return (
+      <Modal visible={isVisible} transparent={true}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Animated.View
+            style={[
+              rStyle,
+              {
+                width: wp('90%'),
+                backgroundColor: COLORS.white,
+                borderRadius: wp(3),
+                overflow: 'hidden',
+              },
+            ]}>
+            <View
+              style={{
+                backgroundColor: COLORS.primary,
+                alignItems: 'flex-end',
+                paddingHorizontal: wp('3%'),
+                height: hp('5%'),
+              }}>
+              <TouchableOpacity
+                style={{marginTop: hp('1%')}}
+                onPress={React.useCallback(() => {
+                  scale.value = withTiming(0, {duration: 2000});
+                  setTimeout(() => {
+                    setIsShowNumberModal(false);
+                  }, 2000);
+                }, [isVisible])}>
+                <Ionicons name="close" size={rf(3)} color={COLORS.white} />
+              </TouchableOpacity>
+            </View>
+            <Image
+              style={styles.imageDriver}
+              source={IMAGES.user1}
+              resizeMode="contain"
+            />
+            <Text
+              style={[
+                styles.txt1,
+                {
+                  fontFamily: FONTFAMILY.Bold,
+                  fontSize: rf(1.6),
+                  color: COLORS.black,
+                  marginTop: hp('2%'),
+                  textAlign: 'center',
+                },
+              ]}>
+              {item?.name}
+            </Text>
+            <Text
+              style={[
+                styles.txt1,
+                {
+                  fontFamily: FONTFAMILY.Bold,
+                  fontSize: rf(1.6),
+                  color: COLORS.black,
+                  marginTop: hp('2%'),
+                  textAlign: 'center',
+                  paddingBottom: hp('2%'),
+                },
+              ]}>
+              {item?.mobile}
+            </Text>
+            <Button
+              title={'Book Tanker'}
+              style={{marginHorizontal: wp('3%'), marginBottom: hp('2%')}}
+              onPress={()=>{
+                scale.value = withTiming(0, {duration: 2000});
+                setTimeout(() => {
+                  setIsShowNumberModal(false);
+                  
+                  navigation.navigate(SCREENS.BookTanker,{
+                    item
+                  })
+                }, 1000);
+              
+              }}
+            />
+          </Animated.View>
+        </View>
+      </Modal>
+    );
+  },
+);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -210,6 +334,12 @@ const styles = StyleSheet.create({
     height: hp('21%'),
     width: wp('30%'),
   },
+  imageDriver: {
+    height: wp('20%'),
+    width: wp('20%'),
+    borderRadius: wp('20%'),
+    alignSelf: 'center',
+  },
   categoryContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -262,21 +392,33 @@ const MarkerData = [
   {
     id: 1,
     lat: 33.5525601624979,
-    long: 73.01996568366887,
+    lng: 73.01996568366887,
+    name: 'Driver 1',
+    mobile: '03113516459',
+    formatted_address:'Karachi, Karachi City, Sindh, Pakistan'
   },
   {
-    id: 1,
+    id: 2,
     lat: 33.57358727719362,
-    long: 73.0235705725744,
+    lng: 73.0235705725744,
+    name: 'Driver 2',
+    mobile: '03113516459',
+    formatted_address:'Karachi, Karachi City, Sindh, Pakistan'
   },
   {
-    id: 1,
+    id: 3,
     lat: 33.55263169197335,
-    long: 73.02151063605696,
+    lng: 73.02151063605696,
+    name: 'Driver 3',
+    mobile: '03113516459',
+    formatted_address:'Karachi, Karachi City, Sindh, Pakistan'
   },
   {
-    id: 1,
+    id: 4,
     lat: 33.55771013335155,
-    long: 73.04073671021978,
+    lng: 73.04073671021978,
+    name: 'Driver 4',
+    mobile: '03113516459',
+    formatted_address:'Karachi, Karachi City, Sindh, Pakistan'
   },
 ];
