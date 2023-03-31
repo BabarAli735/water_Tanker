@@ -13,9 +13,9 @@ import {
   heightPercentageToDP as hp,
   responsiveFontSize as rf,
   widthPercentageToDP as wp,
-} from '../../common/responsiveFunction';
-import {COLORS, FONTFAMILY, IMAGES, SCREENS} from '../../constants/theme';
-import Button from '../../componant/Button';
+} from '../../../common/responsiveFunction';
+import {COLORS, FONTFAMILY, IMAGES, SCREENS} from '../../../constants/theme';
+import Button from '../../../componant/Button';
 import AntiDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Animated, {
@@ -87,7 +87,9 @@ export default function HomeScreen({navigation}) {
           image={IMAGES.tanker}
           title="Usage-Water"
           onPress={() => {
-            navigation.navigate(SCREENS.BookTanker);
+            navigation.navigate(SCREENS.BookTanker,{
+              item:undefined
+            });
           }}
         />
         <CatCompnant

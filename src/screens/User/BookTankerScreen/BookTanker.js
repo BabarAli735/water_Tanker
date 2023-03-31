@@ -7,15 +7,15 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, {useRef, useState} from 'react';
-import {COLORS, FONTFAMILY, height, IMAGES, width} from '../../constants/theme';
+import {COLORS, FONTFAMILY, height, IMAGES, width} from '../../../constants/theme';
 import MapView, {Marker, Polyline} from 'react-native-maps';
-import Button from '../../componant/Button';
+import Button from '../../../componant/Button';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import {
   heightPercentageToDP as hp,
   responsiveFontSize as rf,
   widthPercentageToDP as wp,
-} from '../../common/responsiveFunction';
+} from '../../../common/responsiveFunction';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import MapViewDirections from 'react-native-maps-directions';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';

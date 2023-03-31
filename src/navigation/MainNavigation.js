@@ -5,15 +5,16 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {COLORS, SCREENS} from '../constants/theme';
 import SingIn from '../screens/Auth/SingIn';
 import SignUp from '../screens/Auth/SignUp';
-import HomeScreen from '../screens/Home/HomeScreen';
+import HomeScreen from '../screens/User/Home/HomeScreen';
 
 import AntiDesign from 'react-native-vector-icons/AntDesign';
-import BookTanker from '../screens/BookTankerScreen/BookTanker';
-import Pure_Water from '../screens/Pure_Water';
+import BookTanker from '../screens/User/BookTankerScreen/BookTanker';
+import Pure_Water from '../screens/User/Pure_Water';
 import OnBoardScreen from '../screens/Auth/OnBoardingScreen';
 import GooglePlacesInput from '../componant/GooglePlacesInput';
 import SplashScreen from '../screens/Auth/SplashScreen';
 import OtpVerification from '../screens/Auth/OtpVarification';
+import DriverHomeScreen from '../screens/Driver/Home';
 
 const Stack = createNativeStackNavigator();
 
@@ -39,6 +40,18 @@ const MainNavigation = () => {
         <Stack.Screen
           name={SCREENS.HomeScreen}
           component={HomeScreen}
+          options={{
+            headerStyle: {
+              backgroundColor: COLORS.primary,
+            },
+            headerLeft: () => (
+              <AntiDesign name="menuunfold" color={COLORS.white} size={20} />
+            ),
+          }}
+        />
+        <Stack.Screen
+          name={SCREENS.DriverHomeScreen}
+          component={DriverHomeScreen}
           options={{
             headerStyle: {
               backgroundColor: COLORS.primary,

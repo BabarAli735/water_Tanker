@@ -13,28 +13,51 @@ import {
   responsiveFontSize as rf,
   widthPercentageToDP as wp,
 } from '../../common/responsiveFunction';
-import {COLORS, IMAGES, SCREENS} from '../../constants/theme';
+import {COLORS, CONSTANTS, IMAGES, SCREENS} from '../../constants/theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch} from 'react-redux';
+import {saveUser} from '../../redux/slice/auth';
 export default function SplashScreen({navigation}) {
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0);
+  const dispatch = useDispatch();
   const rStyle = useAnimatedStyle(() => {
     return {
-      opacity:opacity.value,
+      opacity: opacity.value,
       transform: [{scale: scale.value}],
     };
   }, []);
   useEffect(() => {
     scale.value = withTiming(1, {duration: 2000, easing: Easing.linear});
     opacity.value = withTiming(0.3, {duration: 1000, easing: Easing.linear});
+    getUserData();
+  }, []);
+  const getUserData = async () => {
+    const value = await AsyncStorage.getItem(CONSTANTS.UserData);
+    const userData = JSON.parse(value);
+    if (userData !== null && userData !== undefined) {
+      dispatch(saveUser(userData));
+      console.log(userData);
+      if (userData.type === 'Driver') {
+        navigateTo(SCREENS.DriverHomeScreen)
+      } else {
+        navigateTo(SCREENS.HomeScreen)
+      }
+    }else{
+      navigateTo(SCREENS.OnBoardScreen)
+    }
+  };
+
+  const navigateTo=(screen)=>{
     setTimeout(() => {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{name: SCREENS.OnBoardScreen}],
+          routes: [{name:screen}],
         }),
       );
     }, 2000);
-  }, []);
+  }
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.animationContainer, rStyle]}>
@@ -59,7 +82,7 @@ export default function SplashScreen({navigation}) {
             <View
               style={{
                 backgroundColor: COLORS.primary,
-                opacity:0.7,
+                opacity: 0.7,
                 borderRadius: 150,
                 width: 150,
                 height: 150,
@@ -69,7 +92,7 @@ export default function SplashScreen({navigation}) {
       </Animated.View>
       <Animated.Image
         source={IMAGES.tankerimg}
-        style={[styles.logo,rStyle]}
+        style={[styles.logo, rStyle]}
         resizeMode={'contain'}
       />
     </View>
@@ -119,8 +142,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   animationContainer: {
-    backgroundColor:COLORS.primary,
-    borderRadius:wp('90%'),
+    backgroundColor: COLORS.primary,
+    borderRadius: wp('90%'),
     width: wp('90%'),
     height: wp('90%'),
     alignItems: 'center',
@@ -129,6 +152,6 @@ const styles = StyleSheet.create({
   logo: {
     width: 150,
     height: 100,
-position:'absolute'
+    position: 'absolute',
   },
 });

@@ -56,6 +56,7 @@ export const SCREENS = {
   Login:'Login',
   SighnUp:'SighnUp',
   HomeScreen:'HomeScreen',
+  DriverHomeScreen:'DriverHomeScreen',
   BookTanker:'BookTanker',
   Pure_Water:'Pure_Water',
   OnBoardScreen:'OnBoardScreen',

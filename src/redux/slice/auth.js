@@ -24,7 +24,7 @@ export const RegisterSlice = createAsyncThunk(
         true,
         extraHeaders,
       );
-      thunk.dispatch(saveUser(response));
+      thunk.dispatch(saveUser(response.data));
       thunk.dispatch(saveIsLoading(false));
       return response;
     } catch (error) {
@@ -80,7 +80,7 @@ export const LoginSlice = createAsyncThunk('user/signIn', async (data, thunk) =>
       data,
       true,
     );
-    thunk.dispatch(saveUser(response));
+    thunk.dispatch(saveUser(response.data));
       thunk.dispatch(saveIsLoading(false));
     return response;
   } catch (error) {

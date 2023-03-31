@@ -109,7 +109,7 @@ export default function OtpVerification({route, navigation}) {
             }}
             pinCount={4}
             code={code} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
-            onCodeChanged={code => handleOtpChange(code)}
+            onCodeChanged={setCode}
             autoFocusOnLoad={false}
             codeInputFieldStyle={styles.underlineStyleBase}
             codeInputHighlightStyle={styles.underlineStyleHighLighted}

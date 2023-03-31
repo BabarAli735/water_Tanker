@@ -28,16 +28,15 @@ export default function SignUp({navigation, route}) {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const SelectedLocation = useSelector(state => state.authReducer.location);
   const [signUpData, setSignUpData] = useState({
-    userName: 'abcefg',
-    email: 'babarAli@gmail.com',
-    password: '12345',
-    confirmPassword: '12345',
-    location: 'abcdefg',
+    userName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    location: 'Select Location',
     lat: 1235,
     long: 12345,
-    type: 'user',
+    type: route.params.from,
   });
-  console.log(route.params);
   useEffect(() => {
     if (SelectedLocation !== null) {
       handleChange({
@@ -117,8 +116,8 @@ export default function SignUp({navigation, route}) {
           navigation.navigate(SCREENS.GooglePlacesInput);
         }}>
         <EditText
-          placeholder={
-            signUpData.location !== null
+          value={
+            signUpData.location !== 'Select Location'
               ? signUpData.location
               : 'Select Location'
           }

@@ -1,13 +1,13 @@
 import {StyleSheet, Text, View, ScrollView} from 'react-native';
 import React from 'react';
-import {COLORS, FONTFAMILY} from '../../constants/theme';
-import EditText from '../../componant/EditText';
+import {COLORS, FONTFAMILY} from '../../../constants/theme';
 import {
   heightPercentageToDP as hp,
   responsiveFontSize as rf,
   widthPercentageToDP as wp,
-} from '../../common/responsiveFunction';
-import Button from '../../componant/Button';
+} from '../../../common/responsiveFunction';
+import EditText from '../../../componant/EditText';
+import Button from '../../../componant/Button';
 export default function Pure_Water({navigation}) {
   return (
     <ScrollView style={styles.continer}>
