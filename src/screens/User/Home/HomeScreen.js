@@ -8,7 +8,8 @@ import {
   Modal,
 } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
-import React from 'react';
+import messaging from '@react-native-firebase/messaging';
+import React, {useEffect, useRef} from 'react';
 import {
   heightPercentageToDP as hp,
   responsiveFontSize as rf,
@@ -23,18 +24,78 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {getAllDriversSlice} from '../../../redux/slice/user_home';
+import {SaveFcm} from '../../../redux/slice/auth';
+import {getCurrentLocation, locationPermission} from '../../../helper';
+import MapTheme from '../../../helper/MapThem'
 export default function HomeScreen({navigation}) {
   const scale = useSharedValue(0);
+  const mapRef=useRef()
+  const dispatch = useDispatch();
   const [showDriver, setShowDriver] = React.useState(false);
   const [driverDetail, setDriverDetail] = React.useState();
+  const userData = useSelector(state => state.authReducer.userData);
+  const driverData = useSelector(state => state.user_homeReducer.DriversData);
   const [initRegion, setinitialRegion] = React.useState({
     latitude: 33.5525601624979,
     longitude: 73.01996568366887,
     latitudeDelta: 0.014,
     longitudeDelta: 0.0118,
   });
+  useEffect(() => {
+    requestUserPermission(userData.user._id);
+    getAllDrivers();
+  }, []);
+  const getAllDrivers = async () => {
+    dispatch(getAllDriversSlice());
+    const Permision = await locationPermission();
+    console.log('current location==', Permision);
+    if (Permision === 'granted') {
+      const location = await getCurrentLocation();
+      console.log('current location==', location);
 
+      mapRef.current.animateToRegion({
+        latitude:location.latitude,
+        longitude:location.longitude,
+        latitudeDelta: 0.2,
+        longitudeDelta: 0.1,
+      });
+    }
+  };
+  const requestUserPermission = async userId => {
+    // console.log('requestUserPermission ======= >>>>>>>>>>> ');
+    //   Firebase();
+
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      try {
+        messaging()
+          .getToken()
+          .then(token => {
+            SetFcmToken(userId, token);
+          });
+
+        messaging().onTokenRefresh(token => {
+          SetFcmToken(userId, token);
+        });
+      } catch (error) {}
+    }
+  };
+  const SetFcmToken = async (userId, fcmToken) => {
+    // console.log('set fcm token ==========>', token);
+
+    let data = {
+      driverId: userId,
+      fcmToken: fcmToken,
+    };
+    dispatch(SaveFcm(data));
+  };
   const CatCompnant = ({image, title, onPress}) => {
     return (
       <TouchableOpacity style={styles.catComponant} onPress={onPress}>
@@ -70,8 +131,8 @@ export default function HomeScreen({navigation}) {
             title="Book Your Tanker"
             style={styles.booktankerButton}
             onPress={() => {
-              navigation.navigate(SCREENS.BookTanker,{
-                item:undefined
+              navigation.navigate(SCREENS.BookTanker, {
+                item: undefined,
               });
             }}
           />
@@ -87,8 +148,8 @@ export default function HomeScreen({navigation}) {
           image={IMAGES.tanker}
           title="Usage-Water"
           onPress={() => {
-            navigation.navigate(SCREENS.BookTanker,{
-              item:undefined
+            navigation.navigate(SCREENS.BookTanker, {
+              item: undefined,
             });
           }}
         />
@@ -121,8 +182,10 @@ export default function HomeScreen({navigation}) {
         }}>
         <MapView
           // region={initRegion}
+          ref={mapRef}
           initialRegion={initRegion}
           mapType="standard"
+          showsUserLocation={true}
           // customMapStyle={MapTheme}
           onPress={e => {
             // //console.log(e.nativeEvent);
@@ -130,15 +193,16 @@ export default function HomeScreen({navigation}) {
           style={{
             flex: 1,
           }}>
-          {MarkerData.map((item, index) => {
+          {driverData?.map((item, index) => {
             return (
               <Marker
                 key={index}
                 coordinate={{
                   latitude: item.lat,
-                  longitude: item.lng,
+                  longitude: item.long,
                 }}
                 onPress={() => {
+                  console.log('onPress');
                   setShowDriver(true);
                   setDriverDetail(item);
                   scale.value = withTiming(1, {duration: 2000});
@@ -164,7 +228,7 @@ export default function HomeScreen({navigation}) {
 }
 const ShowDriverDetailModal = React.memo(
   ({isVisible, setIsShowNumberModal, scale, item}) => {
-    const navigation=useNavigation()
+    const navigation = useNavigation();
     const rStyle = useAnimatedStyle(() => {
       return {
         transform: [{scale: scale.value}],
@@ -213,6 +277,7 @@ const ShowDriverDetailModal = React.memo(
               resizeMode="contain"
             />
             <Text
+              numberOfLines={1}
               style={[
                 styles.txt1,
                 {
@@ -226,6 +291,7 @@ const ShowDriverDetailModal = React.memo(
               {item?.name}
             </Text>
             <Text
+              numberOfLines={1}
               style={[
                 styles.txt1,
                 {
@@ -237,21 +303,35 @@ const ShowDriverDetailModal = React.memo(
                   paddingBottom: hp('2%'),
                 },
               ]}>
-              {item?.mobile}
+              {item?.email}
+            </Text>
+            <Text
+              numberOfLines={1}
+              style={[
+                styles.txt1,
+                {
+                  fontFamily: FONTFAMILY.Bold,
+                  fontSize: rf(1.6),
+                  color: COLORS.black,
+                  marginTop: hp('2%'),
+                  textAlign: 'center',
+                  paddingBottom: hp('2%'),
+                },
+              ]}>
+              {item?.location}
             </Text>
             <Button
               title={'Book Tanker'}
               style={{marginHorizontal: wp('3%'), marginBottom: hp('2%')}}
-              onPress={()=>{
+              onPress={() => {
                 scale.value = withTiming(0, {duration: 2000});
                 setTimeout(() => {
                   setIsShowNumberModal(false);
-                  
-                  navigation.navigate(SCREENS.BookTanker,{
-                    item
-                  })
+
+                  navigation.navigate(SCREENS.BookTanker, {
+                    item,
+                  });
                 }, 1000);
-              
               }}
             />
           </Animated.View>
@@ -337,9 +417,9 @@ const styles = StyleSheet.create({
     width: wp('30%'),
   },
   imageDriver: {
-    height: wp('20%'),
-    width: wp('20%'),
-    borderRadius: wp('20%'),
+    height: wp('25%'),
+    width: wp('25%'),
+    borderRadius: wp('25%'),
     alignSelf: 'center',
   },
   categoryContainer: {
@@ -397,7 +477,7 @@ const MarkerData = [
     lng: 73.01996568366887,
     name: 'Driver 1',
     mobile: '03113516459',
-    formatted_address:'Karachi, Karachi City, Sindh, Pakistan'
+    formatted_address: 'Karachi, Karachi City, Sindh, Pakistan',
   },
   {
     id: 2,
@@ -405,7 +485,7 @@ const MarkerData = [
     lng: 73.0235705725744,
     name: 'Driver 2',
     mobile: '03113516459',
-    formatted_address:'Karachi, Karachi City, Sindh, Pakistan'
+    formatted_address: 'Karachi, Karachi City, Sindh, Pakistan',
   },
   {
     id: 3,
@@ -413,7 +493,7 @@ const MarkerData = [
     lng: 73.02151063605696,
     name: 'Driver 3',
     mobile: '03113516459',
-    formatted_address:'Karachi, Karachi City, Sindh, Pakistan'
+    formatted_address: 'Karachi, Karachi City, Sindh, Pakistan',
   },
   {
     id: 4,
@@ -421,6 +501,6 @@ const MarkerData = [
     lng: 73.04073671021978,
     name: 'Driver 4',
     mobile: '03113516459',
-    formatted_address:'Karachi, Karachi City, Sindh, Pakistan'
+    formatted_address: 'Karachi, Karachi City, Sindh, Pakistan',
   },
 ];

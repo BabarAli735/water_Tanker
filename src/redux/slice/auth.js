@@ -7,6 +7,7 @@ const initialState = {
   userData: null,
   location: null,
   isLoading: false,
+  FcmData:null
 };
 
 export const RegisterSlice = createAsyncThunk(
@@ -51,6 +52,25 @@ export const SendOtp = createAsyncThunk('user/otp', async (data, thunk) => {
     console.log('SendOtp error', error);
     thunk.dispatch(saveIsLoading(false));
     utills.errorAlert('', error.response.data.message);
+    throw error;
+  }
+});
+export const SaveFcm = createAsyncThunk('user/saveFcm', async (data, thunk) => {
+  try {
+ 
+    thunk.dispatch(saveIsLoading(true));
+    const response = await requestPost(
+      `user/saveFcm`,
+      data,
+      true,
+    );
+    thunk.dispatch(saveIsLoading(false));
+    thunk.dispatch(saveFcmData(response));
+    return response;
+  } catch (error) {
+    console.log('SaveFcm error', error);
+    thunk.dispatch(saveIsLoading(false));
+    // utills.errorAlert('', error.response.data.message);
     throw error;
   }
 });
@@ -129,6 +149,26 @@ export const ForgotPasswordSlice = createAsyncThunk(
     }
   },
 );
+export const logOutSlice = createAsyncThunk(
+  '/user/signOut',
+  async (data, thunk) => {
+    try {
+      thunk.dispatch(saveIsLoading(true));
+      const response = await requestPost(
+        `user/signOut`,
+        data,
+        true,
+      );
+        thunk.dispatch(saveIsLoading(false));
+      return response;
+    } catch (error) {
+      console.log('logOutSlice error', error);
+        thunk.dispatch(saveIsLoading(false));
+      utills.errorAlert('', error.response.data.message);
+      throw error;
+    }
+  },
+);
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -147,9 +187,13 @@ const authSlice = createSlice({
     saveIsLoading: (state, action) => {
       state.isLoading = action.payload;
     },
+    saveFcmData: (state, action) => {
+      state.FcmData = action.payload;
+    },
+   
   },
 });
-export const {saveUser, removeUser, saveLocatin, saveIsLoading} =
+export const {saveUser, removeUser, saveLocatin, saveIsLoading,saveFcmData} =
   authSlice.actions;
 export default authSlice.reducer;
 

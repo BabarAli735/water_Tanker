@@ -62,6 +62,7 @@ export const SCREENS = {
   OnBoardScreen:'OnBoardScreen',
   GooglePlacesInput:'GooglePlacesInput',
   OtpVerification:'OtpVerification',
+  DrawerNavigator:'DrawerNavigator',
  
 }
 
@@ -212,6 +213,12 @@ export const STYLES = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2.0,
     elevation: 3,
+  },
+  drawerItem: {
+    paddingHorizontal: SIZES.fifteen + 3,
+    paddingVertical: SIZES.fifteen,
+    alignItems: 'center',
+    borderRadius: SIZES.fifteen,
   },
 });
 

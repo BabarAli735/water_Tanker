@@ -34,7 +34,7 @@ export default function OtpVerification({route, navigation}) {
               index: 0,
               routes: [
                 {
-                  name: SCREENS.HomeScreen,
+                  name: SCREENS.DrawerNavigator,
                 },
               ],
             })

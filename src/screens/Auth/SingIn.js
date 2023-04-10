@@ -55,7 +55,7 @@ export default function SignIn({navigation, route}) {
             index: 0,
             routes: [
               {
-                name: SCREENS.HomeScreen
+                name: SCREENS.DrawerNavigator
               },
             ],
           })

@@ -6,8 +6,14 @@ import {
   Modal,
   TouchableOpacity,
 } from 'react-native';
-import React, {useRef, useState} from 'react';
-import {COLORS, FONTFAMILY, height, IMAGES, width} from '../../../constants/theme';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  COLORS,
+  FONTFAMILY,
+  height,
+  IMAGES,
+  width,
+} from '../../../constants/theme';
 import MapView, {Marker, Polyline} from 'react-native-maps';
 import Button from '../../../componant/Button';
 import Ionic from 'react-native-vector-icons/Ionicons';
@@ -18,9 +24,19 @@ import {
 } from '../../../common/responsiveFunction';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import MapViewDirections from 'react-native-maps-directions';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { useNavigation } from '@react-navigation/native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import utills from '../../../utills';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { getCurrentLocation, locationPermission } from '../../../helper';
+import { SaveOrder } from '../../../redux/slice/order';
 export default function BookTanker({navigation, route}) {
+  const dispatch=useDispatch()
   const mapRef = useRef();
   const scale = useSharedValue(0);
   const [whereFrom, setWhereFrom] = React.useState(route.params.item);
@@ -28,13 +44,33 @@ export default function BookTanker({navigation, route}) {
   const [showRoute, setshowRoute] = useState(false);
   const [showDriver, setShowDriver] = React.useState(false);
   const [driverDetail, setDriverDetail] = React.useState();
+  const userData = useSelector(state => state.authReducer.userData);
+  console.log(userData.user._id);
+  const driverData = useSelector(state => state.user_homeReducer.DriversData);
   const [initRegion, setinitialRegion] = React.useState({
     latitude: 33.5525601624979,
     longitude: 73.01996568366887,
     latitudeDelta: 0.04,
     longitudeDelta: 0.0118,
   });
+  useEffect(() => {
+    getAllDrivers();
+  }, []);
+  const getAllDrivers = async () => {
+    const Permision = await locationPermission();
+    console.log('current location==', Permision);
+    if (Permision === 'granted') {
+      const location = await getCurrentLocation();
+      console.log('current location==', location);
 
+      mapRef.current.animateToRegion({
+        latitude:location.latitude,
+        longitude:location.longitude,
+        latitudeDelta: 0.2,
+        longitudeDelta: 0.1,
+      });
+    }
+  };
   const PickUpEnter = () => {
     return (
       <View style={styles.pickUpLocation}>
@@ -142,8 +178,7 @@ export default function BookTanker({navigation, route}) {
       </View>
     );
   };
-  console.log('whereFrom', whereFrom);
-  console.log('whereTo', whereTo);
+
   return (
     <View style={styles.container}>
       <MapView
@@ -155,11 +190,12 @@ export default function BookTanker({navigation, route}) {
         onPress={e => {
           // //console.log(e.nativeEvent);
         }}
+        showsUserLocation={true}
         style={{height: '100%', width: '100%'}}>
         {showRoute ? (
           <>
             <MapViewDirections
-              origin={whereFrom.formatted_address}
+              origin={whereFrom.location}
               destination={whereTo.formatted_address}
               strokeColor={COLORS.primary}
               strokeWidth={5}
@@ -199,7 +235,7 @@ export default function BookTanker({navigation, route}) {
             <Marker
               coordinate={{
                 latitude: whereFrom.lat,
-                longitude: whereFrom.lng,
+                longitude: whereFrom.long,
               }}
             />
 
@@ -212,13 +248,13 @@ export default function BookTanker({navigation, route}) {
           </>
         ) : (
           <>
-            {MarkerData.map((item, index) => {
+            {driverData?.map((item, index) => {
               return (
                 <Marker
                   key={index}
                   coordinate={{
                     latitude: item.lat,
-                    longitude: item.lng,
+                    longitude: item.long,
                   }}
                   onPress={() => {
                     setShowDriver(true);
@@ -240,11 +276,41 @@ export default function BookTanker({navigation, route}) {
       <Button
         title="Done"
         style={styles.booktankerButton}
-        onPress={() => {
-          navigation.goBack();
+        onPress={async() => {
+          if (whereFrom === undefined) {
+            utills.errorAlert('', 'Please Select Driver');
+            return;
+          }
+          if (whereTo === undefined) {
+            utills.errorAlert('', 'Please enter destination location');
+            return;
+          }
+          const data = {
+            userId:userData.user._id,
+            driverId: whereFrom._id,
+            from: {
+              address: whereFrom.location,
+              lat: whereFrom.lat,
+              long: whereFrom.long,
+            },
+            to: {
+              address: whereTo.formatted_address,
+              lat: whereTo?.geometry.location.lat,
+              long: whereTo?.geometry.location.lng,
+            },
+          };
+          console.log('data', data);
+       const responce=await   dispatch(SaveOrder(data))
+       console.log('responce===',responce);
+       if(!responce.error){
+        utills.successAlert('','Order has been submitted')
+        setTimeout(()=>{
+          navigation.goBack()
+        },1000)
+       }
         }}
       />
-       <ShowDriverDetailModal
+      <ShowDriverDetailModal
         isVisible={showDriver}
         scale={scale}
         setIsShowNumberModal={setShowDriver}
@@ -255,8 +321,8 @@ export default function BookTanker({navigation, route}) {
   );
 }
 const ShowDriverDetailModal = React.memo(
-  ({isVisible, setIsShowNumberModal, scale, item,setSelectedDriver}) => {
-    const navigation=useNavigation()
+  ({isVisible, setIsShowNumberModal, scale, item, setSelectedDriver}) => {
+    const navigation = useNavigation();
     const rStyle = useAnimatedStyle(() => {
       return {
         transform: [{scale: scale.value}],
@@ -296,7 +362,7 @@ const ShowDriverDetailModal = React.memo(
                     setIsShowNumberModal(false);
                   }, 2000);
                 }, [isVisible])}>
-                <Ionic name="close" size={rf(3)} color={COLORS.white} />
+                <Ionicons name="close" size={rf(3)} color={COLORS.white} />
               </TouchableOpacity>
             </View>
             <Image
@@ -305,6 +371,7 @@ const ShowDriverDetailModal = React.memo(
               resizeMode="contain"
             />
             <Text
+              numberOfLines={1}
               style={[
                 styles.txt1,
                 {
@@ -318,6 +385,7 @@ const ShowDriverDetailModal = React.memo(
               {item?.name}
             </Text>
             <Text
+              numberOfLines={1}
               style={[
                 styles.txt1,
                 {
@@ -329,18 +397,32 @@ const ShowDriverDetailModal = React.memo(
                   paddingBottom: hp('2%'),
                 },
               ]}>
-              {item?.mobile}
+              {item?.email}
+            </Text>
+            <Text
+              numberOfLines={1}
+              style={[
+                styles.txt1,
+                {
+                  fontFamily: FONTFAMILY.Bold,
+                  fontSize: rf(1.6),
+                  color: COLORS.black,
+                  marginTop: hp('2%'),
+                  textAlign: 'center',
+                  paddingBottom: hp('2%'),
+                },
+              ]}>
+              {item?.location}
             </Text>
             <Button
               title={'Select Driver'}
               style={{marginHorizontal: wp('3%'), marginBottom: hp('2%')}}
-              onPress={()=>{
+              onPress={() => {
                 scale.value = withTiming(0, {duration: 2000});
                 setTimeout(() => {
                   setIsShowNumberModal(false);
-                  setSelectedDriver(item)
+                  setSelectedDriver(item);
                 }, 1000);
-              
               }}
             />
           </Animated.View>

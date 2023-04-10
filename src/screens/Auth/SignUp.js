@@ -28,7 +28,7 @@ export default function SignUp({navigation, route}) {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const SelectedLocation = useSelector(state => state.authReducer.location);
   const [signUpData, setSignUpData] = useState({
-    userName: '',
+    name: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -56,24 +56,24 @@ export default function SignUp({navigation, route}) {
 
   const onSubmit = useCallback(async () => {
     console.log('====', signUpData);
-    if (utills.isEmptyOrSpaces(signUpData.userName)) {
-      utills.errorAlert('', 'Please Enter User Name');
+    if (utills.isEmptyOrSpaces(signUpData.name)) {
+      utills.errorAlert('', 'Please enter user name');
       return;
     }
     if (!utills.validateEmail(signUpData.email)) {
-      utills.errorAlert('', 'Please Enter a valid Email');
+      utills.errorAlert('', 'Please enter a valid email');
       return;
     }
     if (utills.isEmptyOrSpaces(signUpData.location)) {
-      utills.errorAlert('', 'Please Select Location');
+      utills.errorAlert('', 'Please select location');
       return;
     }
     if (utills.isEmptyOrSpaces(signUpData.password)) {
-      utills.errorAlert('', 'Please Enter Password');
+      utills.errorAlert('', 'Please enter password');
       return;
     }
     if (signUpData.confirmPassword !== signUpData.password) {
-      utills.errorAlert('', `Confirm Password deosn't match`);
+      utills.errorAlert('', `Confirm password deosn't match`);
       return;
     }
     const response = await dispatch(RegisterSlice(signUpData));
@@ -102,7 +102,7 @@ export default function SignUp({navigation, route}) {
       <EditText
         placeholder={'Username'}
         onChangeText={value => {
-          handleChange({userName: value});
+          handleChange({name: value});
         }}
       />
       <EditText
@@ -117,9 +117,9 @@ export default function SignUp({navigation, route}) {
         }}>
         <EditText
           value={
-            signUpData.location !== 'Select Location'
+            signUpData.location !== 'Select location'
               ? signUpData.location
-              : 'Select Location'
+              : 'Select location'
           }
           disable
         />
@@ -133,7 +133,7 @@ export default function SignUp({navigation, route}) {
         }}
       />
       <EditText
-        placeholder={'Confirm Password'}
+        placeholder={'Confirm password'}
         password
         icon
         onChangeText={value => {

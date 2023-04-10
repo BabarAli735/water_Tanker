@@ -37,27 +37,22 @@ export default function SplashScreen({navigation}) {
     const userData = JSON.parse(value);
     if (userData !== null && userData !== undefined) {
       dispatch(saveUser(userData));
-      console.log(userData);
-      if (userData.type === 'Driver') {
-        navigateTo(SCREENS.DriverHomeScreen)
-      } else {
-        navigateTo(SCREENS.HomeScreen)
-      }
-    }else{
-      navigateTo(SCREENS.OnBoardScreen)
+      navigateTo(SCREENS.DrawerNavigator);
+    } else {
+      navigateTo(SCREENS.OnBoardScreen);
     }
   };
 
-  const navigateTo=(screen)=>{
+  const navigateTo = screen => {
     setTimeout(() => {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{name:screen}],
+          routes: [{name: screen}],
         }),
       );
     }, 2000);
-  }
+  };
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.animationContainer, rStyle]}>
