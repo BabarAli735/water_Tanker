@@ -83,10 +83,8 @@ const styles = StyleSheet.create({
   },
   txtInput: {
     flex: 1,
-    height:'100%',
     color: COLORS.black,
-    // height: hp('8%'),
-    // backgroundColor:'red'
+    height: hp('6%'),
   },
   icon: {
     fontSize: rf(2.5),

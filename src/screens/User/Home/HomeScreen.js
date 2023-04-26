@@ -45,13 +45,12 @@ export default function HomeScreen({navigation}) {
     longitudeDelta: 0.0118,
   });
   useEffect(() => {
-    requestUserPermission(userData.user._id);
     getAllDrivers();
   }, []);
   const getAllDrivers = async () => {
     dispatch(getAllDriversSlice());
     const Permision = await locationPermission();
-    console.log('current location==', Permision);
+    console.log('current Permision==', Permision);
     if (Permision === 'granted') {
       const location = await getCurrentLocation();
       console.log('current location==', location);
@@ -64,38 +63,7 @@ export default function HomeScreen({navigation}) {
       });
     }
   };
-  const requestUserPermission = async userId => {
-    // console.log('requestUserPermission ======= >>>>>>>>>>> ');
-    //   Firebase();
-
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-    if (enabled) {
-      try {
-        messaging()
-          .getToken()
-          .then(token => {
-            SetFcmToken(userId, token);
-          });
-
-        messaging().onTokenRefresh(token => {
-          SetFcmToken(userId, token);
-        });
-      } catch (error) {}
-    }
-  };
-  const SetFcmToken = async (userId, fcmToken) => {
-    // console.log('set fcm token ==========>', token);
-
-    let data = {
-      driverId: userId,
-      fcmToken: fcmToken,
-    };
-    dispatch(SaveFcm(data));
-  };
+ 
   const CatCompnant = ({image, title, onPress}) => {
     return (
       <TouchableOpacity style={styles.catComponant} onPress={onPress}>

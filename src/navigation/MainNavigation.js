@@ -6,6 +6,8 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  Platform,
+  Linking,
 } from 'react-native';
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -18,8 +20,6 @@ import {
 } from '../common/responsiveFunction';
 import SingIn from '../screens/Auth/SingIn';
 import SignUp from '../screens/Auth/SignUp';
-import HomeScreen from '../screens/User/Home/HomeScreen';
-
 import BookTanker from '../screens/User/BookTankerScreen/BookTanker';
 import Pure_Water from '../screens/User/Pure_Water';
 import OnBoardScreen from '../screens/Auth/OnBoardingScreen';
@@ -34,19 +34,57 @@ import Animated, {
 } from 'react-native-reanimated';
 import Button from '../componant/Button';
 import DrawerNavigator from './drawer';
-import { useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {ChangeOrderStatus, getOrder} from '../redux/slice/order';
+import {SaveFcm} from '../redux/slice/auth';
+import utills from '../utills';
 
 const Stack = createNativeStackNavigator();
 
 const MainNavigation = () => {
+  const dispatch = useDispatch();
   const scale = useSharedValue(0);
   const [showDriver, setShowDriver] = React.useState(false);
   const userData = useSelector(state => state.authReducer.userData);
-
   React.useEffect(() => {
-    notificationListener()
-  }, []);
- 
+    if (userData !== null) {
+      notificationListener();
+      requestUserPermission(userData.user._id);
+    }
+  }, [userData]);
+
+  const requestUserPermission = async userId => {
+    // console.log('requestUserPermission ======= >>>>>>>>>>> ');
+    //   Firebase();
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      try {
+        messaging()
+          .getToken()
+          .then(token => {
+            SetFcmToken(userId, token);
+          });
+
+        messaging().onTokenRefresh(token => {
+          SetFcmToken(userId, token);
+        });
+      } catch (error) {}
+    }
+  };
+  const SetFcmToken = async (userId, fcmToken) => {
+    // console.log('set fcm token ==========>', token);
+
+    let data = {
+      driverId: userId,
+      fcmToken: fcmToken,
+    };
+
+    dispatch(SaveFcm(data));
+  };
   const notificationListener = async () => {
     messaging().onNotificationOpenedApp(rm => {
       console.log('Notification caused app to open from background', rm);
@@ -55,18 +93,25 @@ const MainNavigation = () => {
     // Check forGround
     messaging().onMessage(async rm => {
       console.log('Notification in foreground', rm);
-      if(userData?.user.type==='Driver'){
-        setShowDriver(true);
-        scale.value = withTiming(1, {duration: 2000});
+      try {
+        if (userData.user.type === 'User') {
+          utills.successAlert('',rm.notification.body)
+         }
+        if (userData.user.type === 'Driver') {
+         await dispatch(getOrder(rm.data.orderData));
+          setShowDriver(true);
+          scale.value = withTiming(1, {duration: 2000});
+        }
+      } catch (e) {
+        console.log('eeee', e);
       }
-      
     });
 
     // Check whether an initial notification is available
     messaging()
       .getInitialNotification()
       .then(rm => {
-        // console.log('Notification in getInitialNotification', rm);
+        console.log('Notification in getInitialNotification', rm);
         // navref?.current?.navigate(SCREENS.MyOrder)
       })
       .catch(error => {
@@ -75,7 +120,7 @@ const MainNavigation = () => {
 
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('Message handled ======++++++', remoteMessage);
-      if(userData.user.type==='Driver'){
+      if (userData.user.type === 'Driver') {
         setShowDriver(true);
         scale.value = withTiming(1, {duration: 2000});
       }
@@ -83,7 +128,7 @@ const MainNavigation = () => {
   };
   return (
     <>
-      <NavigationContainer >
+      <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
             headerTitle: '',
@@ -112,9 +157,9 @@ const MainNavigation = () => {
           <Stack.Screen
             name={SCREENS.DrawerNavigator}
             component={DrawerNavigator}
-         options={{
-          headerShown:false
-         }}
+            options={{
+              headerShown: false,
+            }}
           />
           {/* <Stack.Screen
             name={SCREENS.DriverHomeScreen}
@@ -141,6 +186,9 @@ const MainNavigation = () => {
 };
 const ShowDriverDetailModal = React.memo(
   ({isVisible, setIsShowNumberModal, scale, item}) => {
+    const dispatch = useDispatch();
+    const orderData = useSelector(state => state.orderReducer.orderData);
+
     const rStyle = useAnimatedStyle(() => {
       return {
         transform: [{scale: scale.value}],
@@ -177,60 +225,197 @@ const ShowDriverDetailModal = React.memo(
               source={IMAGES.user1}
               resizeMode="contain"
             />
-            <Text
-              style={[
-                styles.txt1,
-                {
-                  fontFamily: FONTFAMILY.Bold,
-                  fontSize: rf(1.6),
-                  color: COLORS.black,
-                  marginTop: hp('2%'),
-                  textAlign: 'center',
-                },
-              ]}>
-              item?.name
-            </Text>
-            <Text
-              style={[
-                styles.txt1,
-                {
-                  fontFamily: FONTFAMILY.Bold,
-                  fontSize: rf(1.6),
-                  color: COLORS.black,
-                  marginTop: hp('2%'),
-                  textAlign: 'center',
-                  paddingBottom: hp('2%'),
-                },
-              ]}>
-              item?.mobile
-            </Text>
+
+            <View>
+              <Text
+                style={[
+                  styles.txt1,
+                  {
+                    fontFamily: FONTFAMILY.Bold,
+                    fontSize: rf(1.6),
+                    color: COLORS.black,
+                    marginTop: hp('2%'),
+                    textAlign: 'center',
+                  },
+                ]}>
+                {orderData?.OrderData.user.name}
+              </Text>
+              <Text
+                style={[
+                  styles.txt1,
+                  {
+                    fontFamily: FONTFAMILY.Bold,
+                    fontSize: rf(1.6),
+                    color: COLORS.black,
+                    marginTop: hp('2%'),
+                    textAlign: 'center',
+                    paddingBottom: hp('2%'),
+                  },
+                ]}>
+                {orderData?.OrderData.user.email}
+              </Text>
+            </View>
             <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                paddingHorizontal:wp('2%')
+                paddingHorizontal: wp('2%'),
+                paddingBottom: wp('3%'),
+              }}>
+              <View>
+                <Text
+                  style={[
+                    styles.txt1,
+                    {
+                      fontFamily: FONTFAMILY.Bold,
+                      fontSize: rf(1.6),
+                      color: COLORS.black,
+                      marginTop: hp('2%'),
+                    },
+                  ]}>
+                  Amount
+                </Text>
+                <Text
+                  style={[
+                    styles.txt1,
+                    {
+                      fontFamily: FONTFAMILY.Bold,
+                      fontSize: rf(1.6),
+                      color: COLORS.black,
+                      marginTop: hp('2%'),
+                    },
+                  ]}>
+                  Discount
+                </Text>
+                <Text
+                  style={[
+                    styles.txt1,
+                    {
+                      fontFamily: FONTFAMILY.Bold,
+                      fontSize: rf(1.6),
+                      color: COLORS.black,
+                      marginTop: hp('2%'),
+                    },
+                  ]}>
+                  Total Amount
+                </Text>
+              </View>
+              <View>
+                <Text
+                  style={[
+                    styles.txt1,
+                    {
+                      fontFamily: FONTFAMILY.Bold,
+                      fontSize: rf(1.6),
+                      color: COLORS.black,
+                      marginTop: hp('2%'),
+                    },
+                  ]}>
+                  Rs.{orderData?.OrderData.amount}
+                </Text>
+                <Text
+                  style={[
+                    styles.txt1,
+                    {
+                      fontFamily: FONTFAMILY.Bold,
+                      fontSize: rf(1.6),
+                      color: COLORS.black,
+                      marginTop: hp('2%'),
+                    },
+                  ]}>
+                  Rs.{orderData?.OrderData.discount}
+                </Text>
+                <Text
+                  style={[
+                    styles.txt1,
+                    {
+                      fontFamily: FONTFAMILY.Bold,
+                      fontSize: rf(1.6),
+                      color: COLORS.black,
+                      marginTop: hp('2%'),
+                    },
+                  ]}>
+                  Rs. {orderData?.OrderData.total}
+                </Text>
+              </View>
+            </View>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingHorizontal: wp('2%'),
               }}>
               <Button
-                title={'Accept'}
-                style={{ marginBottom: hp('2%'),width:wp('40%'),backgroundColor:COLORS.trueGreen}}
-                onPress={() => {
-                  scale.value = withTiming(0, {duration: 2000});
-                  setTimeout(() => {
-                    setIsShowNumberModal(false);
-                  }, 2000);
+                title={
+                  orderData?.OrderData.orderStatus === 'pending'
+                    ? 'Accept'
+                    : 'Complete'
+                }
+                style={{
+                  marginBottom: hp('2%'),
+                  width: wp('40%'),
+                  backgroundColor: COLORS.trueGreen,
+                }}
+                onPress={async () => {
+                  if (orderData?.OrderData.orderStatus === 'pending') {
+                    const data = {
+                      id: orderData?.OrderData._id,
+                      status: 'accepted',
+                    };
+                    await dispatch(ChangeOrderStatus(data));
+                    dispatch(getOrder(orderData?.OrderData._id));
+                  } else {
+                    const data = {
+                      id: orderData?.OrderData._id,
+                      status: 'completed',
+                    };
+                    await dispatch(ChangeOrderStatus(data));
+                    scale.value = withTiming(0, {duration: 2000});
+                    setTimeout(() => {
+                      setIsShowNumberModal(false);
+                    }, 2000);
+                  }
                 }}
               />
-              <Button
-                title={'Reject'}
-                style={{ marginBottom: hp('2%'),width:wp('40%'),backgroundColor:'red'}}
-                onPress={() => {
-                  scale.value = withTiming(0, {duration: 2000});
-                  setTimeout(() => {
-                    setIsShowNumberModal(false);
-                  }, 2000);
-                }}
-              />
+              {orderData?.OrderData.orderStatus !== 'accepted' ? (
+                <Button
+                  title={'Reject'}
+                  style={{
+                    marginBottom: hp('2%'),
+                    width: wp('40%'),
+                    backgroundColor: 'red',
+                  }}
+                  onPress={async () => {
+                    const data = {
+                      id: orderData?.OrderData._id,
+                      status: 'reject',
+                    };
+                    await dispatch(ChangeOrderStatus(data));
+                    scale.value = withTiming(0, {duration: 2000});
+                    setTimeout(() => {
+                      setIsShowNumberModal(false);
+                    }, 2000);
+                  }}
+                />
+              ) : (
+                <Button
+                  title={'Sow Route'}
+                  style={{
+                    marginBottom: hp('2%'),
+                    width: wp('40%'),
+                  }}
+                  onPress={() => {
+                    const daddr = `${orderData?.OrderData.to.lat},${orderData?.OrderData.to.long}`;
+                    const company = Platform.OS === 'ios' ? 'apple' : 'google';
+                    Linking.openURL(
+                      `http://maps.${company}.com/maps?daddr=${daddr}`,
+                    );
+                  }}
+                />
+              )}
             </View>
           </Animated.View>
         </View>

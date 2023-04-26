@@ -51,6 +51,34 @@ export const requestPost = (url, data, isRaw, extraHeaders = {}) => {
       });
   });
 };
+export const requestPatch = (url, data, isRaw, extraHeaders = {}) => {
+  let formData = data || {};
+  if (!isRaw && data) {
+    formData = new FormData();
+    for (const key in data) {
+      if (Object.hasOwnProperty.call(data, key)) {
+        formData.append(key, data[key]);
+      }
+    }
+  }
+  return new Promise((resolve, reject) => {
+    axios
+      .patch(base_url + url, formData, {
+        headers: {
+          Accept: 'application/json',
+          ...extraHeaders,
+        },
+      })
+      .then(response => {
+        console.log('API', url, 'requestPost-response.status', response.data);
+        resolve(response);
+      })
+      .catch(error => {
+        console.log('API', url, 'requestPost-error', error);
+        reject(error);
+      });
+  });
+};
 export const requestPostUrlEncoded = (url, data, extraHeaders = {}) => {
   let params = data || {};
    params = new URLSearchParams();

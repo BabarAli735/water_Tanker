@@ -33,10 +33,10 @@ import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import utills from '../../../utills';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { getCurrentLocation, locationPermission } from '../../../helper';
-import { SaveOrder } from '../../../redux/slice/order';
+import {getCurrentLocation, locationPermission} from '../../../helper';
+import {SaveOrder} from '../../../redux/slice/order';
 export default function BookTanker({navigation, route}) {
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
   const mapRef = useRef();
   const scale = useSharedValue(0);
   const [whereFrom, setWhereFrom] = React.useState(route.params.item);
@@ -64,8 +64,8 @@ export default function BookTanker({navigation, route}) {
       console.log('current location==', location);
 
       mapRef.current.animateToRegion({
-        latitude:location.latitude,
-        longitude:location.longitude,
+        latitude: location.latitude,
+        longitude: location.longitude,
         latitudeDelta: 0.2,
         longitudeDelta: 0.1,
       });
@@ -149,8 +149,8 @@ export default function BookTanker({navigation, route}) {
               setWhereTo(details);
             }}
             query={{
-              key: 'AIzaSyDp-9NI8G8l7zLLB0GqNAxjwa17tZKcyuc',
-              // key: 'AIzaSyC-MPat5umkTuxfvfqe1FN1ZMSafBpPcpM',
+              // key: 'AIzaSyDp-9NI8G8l7zLLB0GqNAxjwa17tZKcyuc',
+              key: 'AIzaSyC-MPat5umkTuxfvfqe1FN1ZMSafBpPcpM',
               language: 'en',
               components: 'country:pk',
             }}
@@ -276,7 +276,7 @@ export default function BookTanker({navigation, route}) {
       <Button
         title="Done"
         style={styles.booktankerButton}
-        onPress={async() => {
+        onPress={async () => {
           if (whereFrom === undefined) {
             utills.errorAlert('', 'Please Select Driver');
             return;
@@ -285,6 +285,7 @@ export default function BookTanker({navigation, route}) {
             utills.errorAlert('', 'Please enter destination location');
             return;
           }
+         
           const data = {
             userId:userData.user._id,
             driverId: whereFrom._id,
@@ -300,14 +301,14 @@ export default function BookTanker({navigation, route}) {
             },
           };
           console.log('data', data);
-       const responce=await   dispatch(SaveOrder(data))
-       console.log('responce===',responce);
-       if(!responce.error){
-        utills.successAlert('','Order has been submitted')
-        setTimeout(()=>{
-          navigation.goBack()
-        },1000)
-       }
+          const responce = await dispatch(SaveOrder(data));
+          console.log('responce===', responce);
+          if (!responce.error) {
+            utills.successAlert('', 'Order has been submitted');
+            setTimeout(() => {
+              navigation.goBack();
+            }, 1000);
+          }
         }}
       />
       <ShowDriverDetailModal
