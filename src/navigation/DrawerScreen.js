@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useState} from 'react';
+import React, {memo, useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -33,10 +33,16 @@ import Animated, {
 import {useNavigation} from '@react-navigation/native';
 import Button from '../componant/Button';
 import {logOutSlice} from '../redux/slice/auth';
+import {getProfile} from '../redux/slice/profile';
+import {image_url} from '../api';
 
 export default function DrawerScreen({navigation}) {
+  const dispatch = useDispatch();
   const scale = useSharedValue(0);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const userData = useSelector(state => state.authReducer.userData);
+  const profileData = useSelector(state => state.profileReducer.profileData);
+
   return (
     <View
       style={{
@@ -54,23 +60,35 @@ export default function DrawerScreen({navigation}) {
           paddingVertical: 20,
         }}
         onPress={() => {}}>
-        <View style={[STYLES.drawerItem, {flexDirection: 'row'}]}>
-          <TouchableOpacity activeOpacity={0.7} onPress={() => {}}>
+        <View style={[STYLES.drawerItem, {alignItems: 'center'}]}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => {
+              navigation.navigate(SCREENS.Profile);
+            }}>
             <Image
               style={styles.imageDriver}
-              source={IMAGES.user1}
+              source={
+                profileData?.photo !== undefined
+                  ? {uri: image_url + profileData?.photo}
+                  : IMAGES.user1
+              }
               resizeMode="contain"
             />
           </TouchableOpacity>
-          <View style={{marginHorizontal: SIZES.ten}}>
-            <Text
-              style={[{color: COLORS.black, fontFamily: FONTFAMILY.Medium}]}>
-              UserProfile.name
-            </Text>
-            <Text numberOfLines={1} style={[{color: COLORS.brownGrey}]}>
-              'MM/D/YYYY'
-            </Text>
-          </View>
+          <Text
+            style={[
+              {
+                color: COLORS.black,
+                fontFamily: FONTFAMILY.Medium,
+                marginVertical: hp('1%'),
+              },
+            ]}>
+            {profileData?.name}
+          </Text>
+          <Text numberOfLines={1} style={[{color: COLORS.brownGrey}]}>
+            {profileData?.email}
+          </Text>
         </View>
       </TouchableOpacity>
       {/* End of Top Container of User */}
@@ -80,10 +98,19 @@ export default function DrawerScreen({navigation}) {
           paddingTop: SIZES.ten,
         }}>
         <DrawerItems
-          onPress={useCallback(() => {
-            setShowLogoutModal(true);
-            scale.value = withTiming(1, {duration: 1000});
-          }, [showLogoutModal])}
+          onPress={() => navigation.navigate(SCREENS.Profile)}
+          name={'Profile'}
+          icon={'ios-person-outline'}
+        />
+        <DrawerItems
+          onPress={() => navigation.navigate(SCREENS.Profile)}
+          name={'My Order'}
+          icon={'reader-outline'}
+        />
+        <DrawerItems
+          onPress={() => navigation.navigate(SCREENS.Profile)}
+          name={'Logout'}
+          icon={'log-out-outline'}
         />
       </View>
       <ShowLogoutModal
@@ -95,14 +122,14 @@ export default function DrawerScreen({navigation}) {
   );
 }
 
-const DrawerItems = memo(({onPress}) => {
+const DrawerItems = memo(({onPress, name, icon}) => {
   return (
     <TouchableOpacity
       activeOpacity={1}
       style={[
         STYLES.drawerItem,
         {
-          marginTop: SIZES.twenty * 12,
+          marginTop: hp('2%'),
         },
       ]}
       onPress={onPress}>
@@ -113,11 +140,11 @@ const DrawerItems = memo(({onPress}) => {
           flexDirection: 'row',
         }}>
         <Ionicons
-          name={'log-out-outline'}
+          name={icon}
           style={[{color: COLORS.black, fontSize: rf(3)}]}
         />
         <Text style={[{color: COLORS.black, marginStart: wp('1%')}]}>
-          Logout
+          {name}
         </Text>
       </View>
     </TouchableOpacity>
@@ -308,9 +335,9 @@ const styles = StyleSheet.create({
     width: wp('30%'),
   },
   imageDriver: {
-    height: wp('20%'),
-    width: wp('20%'),
-    borderRadius: wp('20%'),
+    height: wp('30%'),
+    width: wp('30%'),
+    borderRadius: wp('30%'),
     alignSelf: 'center',
   },
   categoryContainer: {

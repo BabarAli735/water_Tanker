@@ -38,6 +38,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ChangeOrderStatus, getOrder} from '../redux/slice/order';
 import {SaveFcm} from '../redux/slice/auth';
 import utills from '../utills';
+import Profile from '../screens/Profile';
+import { getProfile } from '../redux/slice/profile';
 
 const Stack = createNativeStackNavigator();
 
@@ -46,6 +48,7 @@ const MainNavigation = () => {
   const scale = useSharedValue(0);
   const [showDriver, setShowDriver] = React.useState(false);
   const userData = useSelector(state => state.authReducer.userData);
+ 
   React.useEffect(() => {
     if (userData !== null) {
       notificationListener();
@@ -56,6 +59,7 @@ const MainNavigation = () => {
   const requestUserPermission = async userId => {
     // console.log('requestUserPermission ======= >>>>>>>>>>> ');
     //   Firebase();
+    dispatch(getProfile(userData.user._id));
     const authStatus = await messaging().requestPermission();
     const enabled =
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
@@ -68,7 +72,6 @@ const MainNavigation = () => {
           .then(token => {
             SetFcmToken(userId, token);
           });
-
         messaging().onTokenRefresh(token => {
           SetFcmToken(userId, token);
         });
@@ -95,10 +98,10 @@ const MainNavigation = () => {
       console.log('Notification in foreground', rm);
       try {
         if (userData.user.type === 'User') {
-          utills.successAlert('',rm.notification.body)
-         }
+          utills.successAlert('', rm.notification.body);
+        }
         if (userData.user.type === 'Driver') {
-         await dispatch(getOrder(rm.data.orderData));
+          await dispatch(getOrder(rm.data.orderData));
           setShowDriver(true);
           scale.value = withTiming(1, {duration: 2000});
         }
@@ -126,6 +129,7 @@ const MainNavigation = () => {
       }
     });
   };
+
   return (
     <>
       <NavigationContainer>
@@ -150,6 +154,7 @@ const MainNavigation = () => {
           <Stack.Screen name={SCREENS.SighnUp} component={SignUp} />
           <Stack.Screen name={SCREENS.BookTanker} component={BookTanker} />
           <Stack.Screen name={SCREENS.Pure_Water} component={Pure_Water} />
+          <Stack.Screen name={SCREENS.Profile} component={Profile} />
           <Stack.Screen
             name={SCREENS.GooglePlacesInput}
             component={GooglePlacesInput}
@@ -161,18 +166,6 @@ const MainNavigation = () => {
               headerShown: false,
             }}
           />
-          {/* <Stack.Screen
-            name={SCREENS.DriverHomeScreen}
-            component={DriverHomeScreen}
-            options={{
-              headerStyle: {
-                backgroundColor: COLORS.primary,
-              },
-              headerLeft: () => (
-                <AntiDesign name="menuunfold" color={COLORS.white} size={20} />
-              ),
-            }}
-          /> */}
         </Stack.Navigator>
       </NavigationContainer>
 

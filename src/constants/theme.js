@@ -63,6 +63,7 @@ export const SCREENS = {
   GooglePlacesInput:'GooglePlacesInput',
   OtpVerification:'OtpVerification',
   DrawerNavigator:'DrawerNavigator',
+  Profile:'Profile',
  
 }
 
