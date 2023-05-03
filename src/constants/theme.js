@@ -64,6 +64,7 @@ export const SCREENS = {
   OtpVerification:'OtpVerification',
   DrawerNavigator:'DrawerNavigator',
   Profile:'Profile',
+  MyOrder:'MyOrder',
  
 }
 

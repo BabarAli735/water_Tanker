@@ -5,7 +5,8 @@ import utills from '../../utills';
 import { saveIsLoading } from './auth';
 const initialState = {
   orderData: null,
-};
+  myOrder:[]
+}
 
 export const SaveOrder = createAsyncThunk('order', async (data, thunk) => {
     try {
@@ -61,6 +62,24 @@ export const ChangeOrderStatus = createAsyncThunk('order', async (data, thunk) =
       }
     },
   );
+  export const getMyOrder = createAsyncThunk(
+    '/order/MyOrder',
+    async (data, thunk) => {
+      try {
+        console.log(data);
+        thunk.dispatch(saveIsLoading(true));
+        const response = await requestGet(`order/MyOrder?id=${data.id}&type=${data.type}`);
+        thunk.dispatch(saveMyOrderData(response.data.OrderData));
+        thunk.dispatch(saveIsLoading(false));
+        return response;
+      } catch (error) {
+        console.log('getOrder error', error);
+        thunk.dispatch(saveIsLoading(false));
+        utills.errorAlert('', error.response.data.message);
+        throw error;
+      }
+    },
+  );
 const order = createSlice({
   name: 'order',
   initialState,
@@ -68,8 +87,11 @@ const order = createSlice({
     saveOrderData: (state, action) => {
       state.orderData = action.payload;
     },
+    saveMyOrderData: (state, action) => {
+      state.myOrder = action.payload;
+    },
 
   },
 });
-export const {saveOrderData} = order.actions;
+export const {saveOrderData,saveMyOrderData} = order.actions;
 export default order.reducer;

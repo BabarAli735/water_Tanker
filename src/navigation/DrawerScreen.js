@@ -103,7 +103,7 @@ export default function DrawerScreen({navigation}) {
           icon={'ios-person-outline'}
         />
         <DrawerItems
-          onPress={() => navigation.navigate(SCREENS.Profile)}
+          onPress={() => navigation.navigate(SCREENS.MyOrder)}
           name={'My Order'}
           icon={'reader-outline'}
         />
