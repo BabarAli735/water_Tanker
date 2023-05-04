@@ -22,7 +22,8 @@ export default function EditText({
   keyboardType,
   description,
   onChangeText,
-  value
+  value,
+  length
 }) {
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(true);
@@ -44,6 +45,7 @@ export default function EditText({
         multiline={description?true:false}
         showSoftInputOnFocus
         value={value}
+        maxLength={length}
         onChangeText={onChangeText}
         secureTextEntry={password ? showPassword : false}
         onFocus={() => {

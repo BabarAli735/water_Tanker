@@ -26,6 +26,24 @@ export const SaveOrder = createAsyncThunk('order', async (data, thunk) => {
       throw error;
     }
   });
+export const SavePureWaterOrder = createAsyncThunk('purewaterorder', async (data, thunk) => {
+    try {
+   
+      thunk.dispatch(saveIsLoading(true));
+      const response = await requestPost(
+        `order/PureWaterOrder`,
+        data,
+        true,
+      );
+      thunk.dispatch(saveIsLoading(false));
+      return response;
+    } catch (error) {
+      console.log('SavePureWaterOrder error', error);
+      thunk.dispatch(saveIsLoading(false));
+      // utills.errorAlert('', error.response.data.message);
+      throw error;
+    }
+  });
 export const ChangeOrderStatus = createAsyncThunk('order', async (data, thunk) => {
 
   try {
