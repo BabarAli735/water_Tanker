@@ -65,6 +65,7 @@ export const SCREENS = {
   DrawerNavigator:'DrawerNavigator',
   Profile:'Profile',
   MyOrder:'MyOrder',
+  ChatScreen:'ChatScreen',
  
 }
 

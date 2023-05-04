@@ -29,14 +29,13 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getAllDriversSlice} from '../../../redux/slice/user_home';
 import {SaveFcm} from '../../../redux/slice/auth';
 import {getCurrentLocation, locationPermission} from '../../../helper';
-import MapTheme from '../../../helper/MapThem'
+import MapTheme from '../../../helper/MapThem';
 export default function HomeScreen({navigation}) {
   const scale = useSharedValue(0);
-  const mapRef=useRef()
+  const mapRef = useRef();
   const dispatch = useDispatch();
   const [showDriver, setShowDriver] = React.useState(false);
   const [driverDetail, setDriverDetail] = React.useState();
-  const userData = useSelector(state => state.authReducer.userData);
   const driverData = useSelector(state => state.user_homeReducer.DriversData);
   const [initRegion, setinitialRegion] = React.useState({
     latitude: 33.5525601624979,
@@ -47,6 +46,7 @@ export default function HomeScreen({navigation}) {
   useEffect(() => {
     getAllDrivers();
   }, []);
+
   const getAllDrivers = async () => {
     dispatch(getAllDriversSlice());
     const Permision = await locationPermission();
@@ -56,14 +56,14 @@ export default function HomeScreen({navigation}) {
       console.log('current location==', location);
 
       mapRef.current.animateToRegion({
-        latitude:location.latitude,
-        longitude:location.longitude,
+        latitude: location.latitude,
+        longitude: location.longitude,
         latitudeDelta: 0.2,
         longitudeDelta: 0.1,
       });
     }
   };
- 
+
   const CatCompnant = ({image, title, onPress}) => {
     return (
       <TouchableOpacity style={styles.catComponant} onPress={onPress}>

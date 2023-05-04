@@ -41,6 +41,7 @@ import utills from '../utills';
 import Profile from '../screens/Profile';
 import { getProfile } from '../redux/slice/profile';
 import MyOrder from '../screens/Order/MyOrder';
+import ChatScreen from '../screens/Chat';
 
 const Stack = createNativeStackNavigator();
 
@@ -157,6 +158,7 @@ const MainNavigation = () => {
           <Stack.Screen name={SCREENS.Pure_Water} component={Pure_Water} />
           <Stack.Screen name={SCREENS.Profile} component={Profile} />
           <Stack.Screen name={SCREENS.MyOrder} component={MyOrder} />
+          <Stack.Screen name={SCREENS.ChatScreen} component={ChatScreen} />
           <Stack.Screen
             name={SCREENS.GooglePlacesInput}
             component={GooglePlacesInput}

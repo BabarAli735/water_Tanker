@@ -108,6 +108,11 @@ export default function DrawerScreen({navigation}) {
           icon={'reader-outline'}
         />
         <DrawerItems
+          onPress={() => navigation.navigate(SCREENS.ChatScreen)}
+          name={'Chat'}
+          icon={'reader-outline'}
+        />
+        <DrawerItems
           onPress={() => navigation.navigate(SCREENS.Profile)}
           name={'Logout'}
           icon={'log-out-outline'}
