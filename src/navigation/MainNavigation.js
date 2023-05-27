@@ -50,18 +50,18 @@ const MainNavigation = () => {
   const scale = useSharedValue(0);
   const [showDriver, setShowDriver] = React.useState(false);
   const userData = useSelector(state => state.authReducer.userData);
- 
+ console.log('userData====', userData);
   React.useEffect(() => {
     if (userData !== null) {
       notificationListener();
-      requestUserPermission(userData.user._id);
+      requestUserPermission(userData.data? userData.data?.user._id:userData.user._id);
     }
   }, [userData]);
 
   const requestUserPermission = async userId => {
     // console.log('requestUserPermission ======= >>>>>>>>>>> ');
     //   Firebase();
-    dispatch(getProfile(userData.user._id));
+    dispatch(getProfile(userData.data? userData?.data?.user._id:userData?.user._id));
     const authStatus = await messaging().requestPermission();
     const enabled =
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
@@ -99,10 +99,10 @@ const MainNavigation = () => {
     messaging().onMessage(async rm => {
       console.log('Notification in foreground', rm);
       try {
-        if (userData.user.type === 'User') {
+        if (userData.data? userData?.data.user?.type: userData?.user?.type === 'User') {
           utills.successAlert('', rm.notification.body);
         }
-        if (userData.user.type === 'Driver') {
+        if (userData.data? userData?.data.user?.type: userData?.user?.type === 'Driver') {
           await dispatch(getOrder(rm.data.orderData));
           setShowDriver(true);
           scale.value = withTiming(1, {duration: 2000});
@@ -125,7 +125,7 @@ const MainNavigation = () => {
 
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('Message handled ======++++++', remoteMessage);
-      if (userData.user.type === 'Driver') {
+      if (userData.data? userData.data?.user.type:userData.user.type === 'Driver') {
         setShowDriver(true);
         scale.value = withTiming(1, {duration: 2000});
       }

@@ -33,7 +33,7 @@ export default function DrawerNavigator() {
         headerShadowVisible: false,
       }}
       drawerContent={props => <DrawerScreen {...props} />}>
-      {userData?.user.type === 'Driver' ? (
+      {userData.data?userData?.data?.user.type:userData?.user.type === 'Driver' ? (
         <Drawer.Screen
           name={SCREENS.DriverHomeScreen}
           component={DriverHomeScreen}

@@ -45,7 +45,6 @@ export default function BookTanker({navigation, route}) {
   const [showDriver, setShowDriver] = React.useState(false);
   const [driverDetail, setDriverDetail] = React.useState();
   const userData = useSelector(state => state.authReducer.userData);
-  console.log(userData.user._id);
   const driverData = useSelector(state => state.user_homeReducer.DriversData);
   const [initRegion, setinitialRegion] = React.useState({
     latitude: 33.5525601624979,
@@ -287,7 +286,7 @@ export default function BookTanker({navigation, route}) {
           }
          
           const data = {
-            userId:userData.user._id,
+            userId:userData.data? userData?.data?.user._id: userData?.user._id,
             driverId: whereFrom._id,
             from: {
               address: whereFrom.location,

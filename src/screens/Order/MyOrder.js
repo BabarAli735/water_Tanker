@@ -14,14 +14,13 @@ export default function MyOrder() {
   const dispatch = useDispatch();
   const userData = useSelector(state => state.authReducer.userData);
   const MyOrder = useSelector(state => state.orderReducer.myOrder);
-  console.log('MyOrder===', MyOrder);
   useEffect(() => {
     getOrder();
   }, []);
   const getOrder = async () => {
     let data = {
-      id: userData.user._id,
-      type: userData.user.type,
+      id:userData.data? userData.data.user._id: userData.user._id,
+      type:userData.data? userData?.data.user.type:userData.user.type,
     };
     dispatch(getMyOrder(data));
   };

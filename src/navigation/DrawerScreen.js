@@ -113,7 +113,10 @@ export default function DrawerScreen({navigation}) {
           icon={'reader-outline'}
         />
         <DrawerItems
-          onPress={() => navigation.navigate(SCREENS.Profile)}
+          onPress={() => {
+            setShowLogoutModal(true);
+            scale.value = withTiming(1, {duration: 1000});
+          }}
           name={'Logout'}
           icon={'log-out-outline'}
         />
@@ -237,7 +240,7 @@ const ShowLogoutModal = memo(({isVisible, setShowLogoutModal, scale, item}) => {
                     setShowLogoutModal(false);
                   }, 1000);
                   const data = {
-                    id: userData.user._id,
+                    id:userData.data? userData?.data.user._id:userData.user._id,
                   };
                   console.log(data);
                   const responce = await dispatch(logOutSlice(data));

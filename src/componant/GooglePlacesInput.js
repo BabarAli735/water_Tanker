@@ -114,8 +114,9 @@ const GooglePlacesInput = ({navigation, route}) => {
         }, 500);
       }}
       query={{
-        key: 'AIzaSyDp-9NI8G8l7zLLB0GqNAxjwa17tZKcyuc',
-        // key: 'AIzaSyC-MPat5umkTuxfvfqe1FN1ZMSafBpPcpM',
+        // key: 'AIzaSyDp-9NI8G8l7zLLB0GqNAxjwa17tZKcyuc',
+        key: 'AIzaSyC-MPat5umkTuxfvfqe1FN1ZMSafBpPcpM',
+        // key: 'AIzaSyANdlgdYqku9oKiM00U4VQ9DexW6otVpls',
         language: 'en',
         components: 'country:pk',
       }}

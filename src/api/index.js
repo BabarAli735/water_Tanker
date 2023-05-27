@@ -1,6 +1,6 @@
 import axios from 'axios';
-export const base_url = 'http://192.168.10.6:3000/api/v1/';
-export const image_url = 'http://192.168.10.6:3000/images/';
+export const base_url = 'http://192.168.43.78:3000/api/v1/';
+export const image_url = 'http://192.168.43.78:3000/images/';
 export const API = {
   IMAGE_URL: image_url,
   BASE_URL: base_url,

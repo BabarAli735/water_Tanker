@@ -23,7 +23,7 @@ export default function Pure_Water({navigation}) {
     company: '',
     email: '',
     phone: '',
-    userId: userData.user._id,
+    userId:userData.data? userData?.data.user._id:userData.user._id,
   });
 
   const handleChange = useCallback(

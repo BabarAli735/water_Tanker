@@ -25,6 +25,7 @@ export const RegisterSlice = createAsyncThunk(
         true,
         extraHeaders,
       );
+      
       thunk.dispatch(saveUser(response.data));
       thunk.dispatch(saveIsLoading(false));
       return response;
@@ -120,8 +121,8 @@ export const ChangePasswordSlice = createAsyncThunk(
         `/user_change_password`,
         data,
       );
-      //   thunk.dispatch(saveIsLoading(false));
       return response;
+
     } catch (error) {
       console.log('ChangePasswordSlice error', error);
       //   thunk.dispatch(saveIsLoading(false));
