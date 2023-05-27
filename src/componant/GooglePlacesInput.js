@@ -115,7 +115,7 @@ const GooglePlacesInput = ({navigation, route}) => {
       }}
       query={{
         // key: 'AIzaSyDp-9NI8G8l7zLLB0GqNAxjwa17tZKcyuc',
-        key: 'AIzaSyC-MPat5umkTuxfvfqe1FN1ZMSafBpPcpM',
+        key: 'AIzaSyCeJZ4a1xNljXw8F9TG1zO2xweaiIKTV2w',
         // key: 'AIzaSyANdlgdYqku9oKiM00U4VQ9DexW6otVpls',
         language: 'en',
         components: 'country:pk',

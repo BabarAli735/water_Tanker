@@ -14,6 +14,8 @@ export default function DrawerNavigator() {
   const Drawer = createDrawerNavigator();
   const userData = useSelector(state => state.authReducer.userData);
 
+  let user=userData?.data?userData.data.user:userData.user
+  console.log(userData);
   return (
     <Drawer.Navigator
       drawerPosition="left"
@@ -33,7 +35,7 @@ export default function DrawerNavigator() {
         headerShadowVisible: false,
       }}
       drawerContent={props => <DrawerScreen {...props} />}>
-      {userData.data?userData?.data?.user.type:userData?.user.type === 'Driver' ? (
+      {user.type === 'Driver' ? (
         <Drawer.Screen
           name={SCREENS.DriverHomeScreen}
           component={DriverHomeScreen}

@@ -199,7 +199,7 @@ export default function BookTanker({navigation, route}) {
               strokeColor={COLORS.primary}
               strokeWidth={5}
               // apikey={'AIzaSyDp-9NI8G8l7zLLB0GqNAxjwa17tZKcyuc'}
-              apikey={'AIzaSyAvWnnwxysCLY3IitgCIPBHPU_g4HiBS04'}
+              apikey={'AIzaSyCeJZ4a1xNljXw8F9TG1zO2xweaiIKTV2w'}
               onStart={params => {
                 console.log(
                   `Started routing between ------ "${
