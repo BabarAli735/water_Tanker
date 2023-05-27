@@ -50,7 +50,7 @@ const MainNavigation = () => {
   const scale = useSharedValue(0);
   const [showDriver, setShowDriver] = React.useState(false);
   const userData = useSelector(state => state.authReducer.userData);
-  let user=userData?.data?userData.data.user:userData.user
+  let user=userData?.data?userData?.data?.user:userData?.user
   React.useEffect(() => {
     if (userData !== null) {
       notificationListener();

@@ -107,11 +107,11 @@ export default function DrawerScreen({navigation}) {
           name={'My Order'}
           icon={'reader-outline'}
         />
-        <DrawerItems
+        {/* <DrawerItems
           onPress={() => navigation.navigate(SCREENS.ChatScreen)}
           name={'Chat'}
           icon={'reader-outline'}
-        />
+        /> */}
         <DrawerItems
           onPress={() => {
             setShowLogoutModal(true);
