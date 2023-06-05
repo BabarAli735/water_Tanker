@@ -30,6 +30,7 @@ export default function SignUp({navigation, route}) {
   const [signUpData, setSignUpData] = useState({
     name: '',
     email: '',
+    number: '',
     password: '',
     confirmPassword: '',
     location: 'Select Location',
@@ -124,6 +125,14 @@ export default function SignUp({navigation, route}) {
           disable
         />
       </TouchableOpacity>
+      <EditText
+        placeholder={'Enter Number'}
+        onChangeText={value => {
+          handleChange({number: value});
+        }}
+        length={11}
+        keyboardType={'number-pad'}
+      />
       <EditText
         placeholder={'Password'}
         password

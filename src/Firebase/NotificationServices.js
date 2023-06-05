@@ -6,7 +6,7 @@ import Firebase from './firebaseConfig';
 
 export async function requestUserPermission(userId,dispatch) {
   // console.log('requestUserPermission ======= >>>>>>>>>>> ');
-//   Firebase();
+  Firebase();
 
   const authStatus = await messaging().requestPermission();
   const enabled =

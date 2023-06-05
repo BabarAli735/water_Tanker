@@ -1,5 +1,11 @@
-import {StyleSheet, Text, View, ScrollView} from 'react-native';
-import React, {useCallback, useState} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
+import React, {useCallback, useRef, useState} from 'react';
 import {COLORS, FONTFAMILY} from '../../../constants/theme';
 import {
   heightPercentageToDP as hp,
@@ -11,8 +17,11 @@ import Button from '../../../componant/Button';
 import {useDispatch, useSelector} from 'react-redux';
 import utills from '../../../utills';
 import {SavePureWaterOrder} from '../../../redux/slice/order';
+import BottomSheet from '../../../componant/BottomSheet';
 export default function Pure_Water({navigation}) {
   const dispatch = useDispatch();
+  const ref = useRef();
+  const ref1 = useRef();
   const userData = useSelector(state => state.authReducer.userData);
   const [orderData, setOrderData] = useState({
     name: '',
@@ -23,7 +32,7 @@ export default function Pure_Water({navigation}) {
     company: '',
     email: '',
     phone: '',
-    userId:userData.data? userData?.data.user._id:userData.user._id,
+    userId: userData.data ? userData?.data.user._id : userData.user._id,
   });
 
   const handleChange = useCallback(
@@ -75,59 +84,109 @@ export default function Pure_Water({navigation}) {
     }
   }, [orderData]);
   return (
-    <ScrollView
-      style={styles.continer}
-      contentContainerStyle={{
-        paddingBottom: hp('5%'),
-      }}>
-      <Text style={[styles.txt3]}>Name</Text>
-      <EditText
-        placeholder={'Enter Your Name'}
-        onChangeText={value => handleChange({name: value})}
+    <>
+      <ScrollView
+        style={styles.continer}
+        contentContainerStyle={{
+          paddingBottom: hp('5%'),
+        }}>
+        <Text style={[styles.txt3]}>Name</Text>
+        <EditText
+          placeholder={'Enter Your Name'}
+          onChangeText={value => handleChange({name: value})}
+        />
+        <Text style={[styles.txt3]}>Email</Text>
+        <EditText
+          placeholder={'Enter Your Email'}
+          onChangeText={value => handleChange({email: value})}
+        />
+        <Text style={[styles.txt3]}>Phone</Text>
+        <EditText
+          placeholder={'Enter Your Phone Number'}
+          keyboardType="number-pad"
+          length={11}
+          onChangeText={value => handleChange({phone: value})}
+        />
+        <Text style={[styles.txt3]}>Address</Text>
+        <EditText
+          placeholder={'Enter Your Address'}
+          onChangeText={value => handleChange({address: value})}
+        />
+        <Text style={[styles.txt3]}>City</Text>
+        <TouchableOpacity
+          onPress={() => {
+            const isActive = ref?.current?.isActive();
+            if (isActive) {
+              ref?.current?.scrollTo(0);
+            } else {
+              ref?.current?.scrollTo(-600);
+            }
+          }}>
+          <EditText
+            placeholder={'Enter Your City'}
+            value={orderData.city}
+            onChangeText={value => handleChange({city: value})}
+            disable={true}
+          />
+        </TouchableOpacity>
+        <Text style={[styles.txt3]}>ZipCode</Text>
+        <EditText
+          placeholder={'Enter Your Zip Code'}
+          keyboardType="number-pad"
+          length={6}
+          onChangeText={value => handleChange({zipcode: value})}
+        />
+        <Text style={[styles.txt3]}>Quantity</Text>
+        <EditText
+          placeholder={'Enter Water Quantity'}
+          keyboardType="number-pad"
+          length={5}
+          onChangeText={value => handleChange({quantity: value})}
+        />
+        <Text style={[styles.txt3]}>Company</Text>
+        <TouchableOpacity
+          onPress={() => {
+            const isActive = ref1?.current?.isActive();
+            if (isActive) {
+              ref1?.current?.scrollTo(0);
+            } else {
+              ref1?.current?.scrollTo(-600);
+            }
+          }}>
+          <EditText
+            placeholder={'Select Comany'}
+            value={orderData.company}
+            onChangeText={value => handleChange({city: value})}
+            disable={true}
+          />
+        </TouchableOpacity>
+        <Button title="Book" style={{marginTop: hp('4%')}} onPress={onPress} />
+      </ScrollView>
+      <BottomSheet
+        ref={ref}
+        data={citydata}
+        onSelectItem={data => {
+          console.log(data);
+          handleChange({city:data.title})
+        }}
       />
-      <Text style={[styles.txt3]}>Email</Text>
-      <EditText
-        placeholder={'Enter Your Email'}
-        onChangeText={value => handleChange({email: value})}
+      <BottomSheet
+        ref={ref1}
+        data={companydata}
+        onSelectItem={data => {
+          console.log(data);
+          handleChange({company:data.title})
+        }}
       />
-      <Text style={[styles.txt3]}>Phone</Text>
-      <EditText
-        placeholder={'Enter Your Phone Number'}
-        keyboardType="number-pad"
-        length={11}
-        onChangeText={value => handleChange({phone: value})}
+      <BottomSheet
+        ref={ref2}
+        data={quantitydata}
+        onSelectItem={data => {
+          console.log(data);
+          handleChange({quantity:data.title})
+        }}
       />
-      <Text style={[styles.txt3]}>Address</Text>
-      <EditText
-        placeholder={'Enter Your Address'}
-        onChangeText={value => handleChange({address: value})}
-      />
-      <Text style={[styles.txt3]}>City</Text>
-      <EditText
-        placeholder={'Enter Your City'}
-        onChangeText={value => handleChange({city: value})}
-      />
-      <Text style={[styles.txt3]}>ZipCode</Text>
-      <EditText
-        placeholder={'Enter Your Zip Code'}
-        keyboardType="number-pad"
-        length={6}
-        onChangeText={value => handleChange({zipcode: value})}
-      />
-      <Text style={[styles.txt3]}>Quantity</Text>
-      <EditText
-        placeholder={'Enter Water Quantity'}
-        keyboardType="number-pad"
-        length={5}
-        onChangeText={value => handleChange({quantity: value})}
-      />
-      <Text style={[styles.txt3]}>Company</Text>
-      <EditText
-        placeholder={'Enter Water Company Name'}
-        onChangeText={value => handleChange({company: value})}
-      />
-      <Button title="Book" style={{marginTop: hp('4%')}} onPress={onPress} />
-    </ScrollView>
+    </>
   );
 }
 
@@ -144,3 +203,34 @@ const styles = StyleSheet.create({
     marginTop: hp('1%'),
   },
 });
+const citydata = [
+  {
+    id: 1,
+    title: 'Islambabad',
+  },
+  {
+    id: 2,
+    title: 'RawalPindi',
+  },
+  {id: 3, title: 'lahor'},
+  {id: 4, title: 'Muree'},
+  {id: 5, title: 'Faisalabad'},
+  {id: 6, title: 'Karachi'},
+  {id: 7, title: 'Multan'},
+];
+const companydata = [
+  {
+    id: 1,
+    title: 'Prime Pani',
+  },
+  {
+    id: 2,
+    title: 'Aqua Fina',
+  },
+  {id: 3, title: 'Nestle Pure Life'},
+  {id: 4, title: 'Nayab'},
+  {id: 5, title: 'Piyaas Plus'},
+  {id: 6, title: 'Fast Water'},
+  {id: 7, title: 'Aqualine'},
+];
+
