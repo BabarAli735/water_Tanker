@@ -26,7 +26,7 @@ export const RegisterSlice = createAsyncThunk(
         extraHeaders,
       );
       console.log('response===',response);
-      // thunk.dispatch(saveUser(response.data));
+      thunk.dispatch(saveUser(response.data));
       thunk.dispatch(saveIsLoading(false));
       return response;
     } catch (error) {

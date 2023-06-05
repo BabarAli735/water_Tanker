@@ -15,7 +15,6 @@ export default function DrawerNavigator() {
   const userData = useSelector(state => state.authReducer.userData);
 
   let user=userData?.data?userData.data.user:userData.user
-  console.log(userData);
   return (
     <Drawer.Navigator
       drawerPosition="left"
