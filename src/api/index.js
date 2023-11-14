@@ -61,9 +61,7 @@ export const requestPatch = (url, data, isRaw, extraHeaders = {}) => {
       }
     }
   }
-  console.log('====================================');
-  console.log(formData.image);
-  console.log('====================================');
+ 
   return new Promise((resolve, reject) => {
    
     axios
